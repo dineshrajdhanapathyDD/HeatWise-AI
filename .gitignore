@@ -1,0 +1,4 @@
+# Local-only working folders (not part of the public repository)
+_reference/
+.agents/
+.vscode/

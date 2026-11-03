@@ -14,6 +14,18 @@ This page explains how one assessment moves through the agents, which Strands fe
 
 The coordinator uses the agents-as-tools pattern. Its tools are `@tool` closures over a `CoordinatorRun` state object; each one calls a specialist's `.run(...)` with data held in code and returns a compact JSON summary, so the model never copies weather or plan JSON between agents.
 
+## Where the agents run
+
+The same workflow runs in three places, chosen by `AGENT_MODE`:
+
+| Mode | Where the five agents run | Used for |
+|---|---|---|
+| `agentcore` (deployed) | Amazon Bedrock AgentCore Runtime `HeatWiseAC_heatwise_agent`. `backend/agentcore_entry.py` wraps the coordinator in `BedrockAgentCoreApp` / `@app.entrypoint`. The worker Lambda calls `invoke_agent_runtime` with the `AssessmentRequest` JSON (`backend/agents/agentcore_client.py`) and gets the `PreparednessReport` back. | The public API and the dashboard on AWS |
+| `bedrock` | In-process: the local API server, the CLI, or the worker Lambda without the runtime ARN | Local development and live tests |
+| `offline` | In-process with scripted models | Tests and offline demos |
+
+Hooks, steering, the revision loop and the safety checks are identical in all three, because the runtime runs the same `backend/` package (staged by `infrastructure/scripts/stage_agentcore_app.py`). On AgentCore, the conversation is keyed by `runtimeSessionId` (`heatwise-job-<job id>`), and `SESSION_STORAGE=none` keeps session files off the runtime's disk.
+
 ## Flow
 
 ```mermaid

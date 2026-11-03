@@ -76,6 +76,8 @@ def build_app(context_overrides: dict[str, Any] | None = None) -> cdk.App:
         throttle_rate=float(need("heatwise:throttle_rate")),
         throttle_burst=int(need("heatwise:throttle_burst")),
         max_pending_jobs=int(need("heatwise:max_pending_jobs")),
+        # Optional: run the agents on AgentCore Runtime (pass -c heatwise:agentcore_runtime_arn=<arn>).
+        agentcore_runtime_arn=ctx("heatwise:agentcore_runtime_arn") or None,
         description="HeatWise AI API - Lambda functions and HTTP API",
     )
     if _flag(ctx("heatwise:frontend")):

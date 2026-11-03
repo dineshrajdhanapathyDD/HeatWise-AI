@@ -34,3 +34,13 @@ infrastructure/build/
 Thumbs.db
 .vscode/
 .idea/
+
+# AgentCore project (HeatWiseAC): generated or staged, rebuilt by infrastructure/scripts/stage_agentcore_app.py
+HeatWiseAC/app/
+HeatWiseAC/agentcore/*.zip
+HeatWiseAC/agentcore/*/staging/
+HeatWiseAC/agentcore/.cli/
+HeatWiseAC/agentcore/.env.local
+HeatWiseAC/agentcore/aws-targets.json
+HeatWiseAC/agentcore/cdk/node_modules/
+HeatWiseAC/agentcore/cdk/cdk.out/

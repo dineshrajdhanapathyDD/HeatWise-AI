@@ -43,19 +43,21 @@ A coordinator agent delegates to four specialists (agents as tools): Weather Int
 | `AgentSkills` plugin with three `SKILL.md` files | `backend/agents/planner_agent.py`, `backend/skills/` |
 | Steering plugin: `OrderingSteeringHandler` (`SteeringHandler`, `Proceed`, `Guide`) keeps weather -> risk -> plan -> safety and one revision | `backend/agents/coordinator.py` |
 | `SequentialToolExecutor` on the coordinator | `backend/agents/coordinator.py` |
-| `FileSessionManager` (local) and `S3SessionManager` (AWS) for the coordinator conversation | `backend/session/sessions.py` |
+| `FileSessionManager` for the coordinator conversation locally. On AgentCore Runtime the session is keyed by `runtimeSessionId`, and `S3SessionManager` remains for the Lambda-hosted mode | `backend/session/sessions.py` |
+| Deployment on Amazon Bedrock AgentCore Runtime: `BedrockAgentCoreApp` and `@app.entrypoint` wrap the coordinator; the worker calls `invoke_agent_runtime` | `backend/agentcore_entry.py`, `backend/agentcore_handler.py`, `backend/agents/agentcore_client.py`, `HeatWiseAC/` |
 | `strands_evals` `Case`, `Experiment`, `OutputEvaluator` (LLM-as-judge in the live evaluation) | `backend/evaluation/judge.py` |
 | A scripted Strands `Model` for offline runs and tests | `backend/agents/scripted.py`, `backend/agents/offline.py` |
 
 ## AWS services
 
-The CDK app in `infrastructure/` defines two deployed stacks. A read-only `describe-stacks` / `list-stack-resources` in us-east-1 on 2026-11-03 showed:
+Deployed in us-east-1 on 2026-11-03 (deploy outputs and live checks in [deployment.md](deployment.md)):
 
-- `HeatWiseData` (`CREATE_COMPLETE`): two Amazon DynamoDB tables (assessments, jobs) and an Amazon S3 bucket (with its bucket policy) for coordinator sessions.
-- `HeatWiseApi` (`UPDATE_COMPLETE`): two AWS Lambda functions (the FastAPI API and the assessment worker), an Amazon API Gateway HTTP API, two AWS IAM roles with inline least-privilege policies, and three Amazon CloudWatch Logs log groups.
-- Amazon Bedrock is called by the worker (and by the live evaluation) with IAM scoped to the Nova 2 Lite US inference profile and its destination models.
+- **Amazon Bedrock AgentCore Runtime** hosts the agents. The coordinator and its four specialists are deployed as the runtime `HeatWiseAC_heatwise_agent` with the `agentcore` CLI, as in the workshop's deploy module. The code is a CodeZip bundle built without Docker, and the entrypoint is `BedrockAgentCoreApp` with `@app.entrypoint`. One live assessment invoked directly took 24.0 s. Through the public API, one took 19.5 s. Both produced complete, verified reports.
+- **Amazon Bedrock** (Nova 2 Lite, `us.amazon.nova-2-lite-v1:0`) is the model for every agent, called from inside the runtime.
+- **AWS Lambda and Amazon API Gateway** (HTTP API) carry the dashboard's job API. The API Lambda creates the job. A worker Lambda calls `invoke_agent_runtime` once and stores the report. It runs no agents, and its only AgentCore permission is to invoke that runtime. It exists because an HTTP API request times out at 30 s, which is too close to an agent run.
+- **Amazon DynamoDB** stores jobs and reports (on-demand). **Amazon CloudWatch Logs** holds the API, worker and runtime logs. **AWS IAM** roles are scoped per function. **AWS CloudFormation** (CDK and the AgentCore CLI) defines all of it.
 
-An optional CloudFront stack for the dashboard and an optional Amazon Bedrock AgentCore entrypoint are in the code but not deployed. The Milestone 5 additions (checklist and evaluation endpoints, one extra IAM action) need a redeploy ([deployment.md](deployment.md)).
+The runtime's execution role is the AgentCore CLI default. It allows Bedrock model invocation on any model in the account, which is wider than the Lambda roles. A custom `executionRoleArn` would narrow it to Nova 2 Lite. An optional CloudFront stack for the dashboard is in the code but not deployed.
 
 ## How we evaluated it
 

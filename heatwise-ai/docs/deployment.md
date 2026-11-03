@@ -1,6 +1,6 @@
 # Deploying HeatWise AI to AWS
 
-This guide covers the infrastructure in `infrastructure/` (Python AWS CDK). Every `deploy`, `destroy` or delete command below is a step you run yourself, after deciding the open points in [Before you deploy](#before-you-deploy). `HeatWiseData` and `HeatWiseApi` were first deployed on 2026-11-03 (see the [Deployment log](#deployment-log)); the Milestone 5 code changes are not deployed yet ([Milestone 5 changes](#milestone-5-changes-redeploy-needed)).
+This guide covers the infrastructure in `infrastructure/` (Python AWS CDK). Every `deploy`, `destroy` or delete command below is a step you run yourself, after deciding the open points in [Before you deploy](#before-you-deploy). Current deployment (2026-11-03): the agents run on Amazon Bedrock AgentCore Runtime (`HeatWiseAC_heatwise_agent`, deployed from `HeatWiseAC/` with the `agentcore` CLI). `HeatWiseData` and `HeatWiseApi` carry the job API, and `HeatWiseApi` is deployed with `-c heatwise:agentcore_runtime_arn=<arn>`, which includes the Milestone 5 changes. The exact commands that were run are in the [Deployment log](#deployment-log), the authoritative record. Section 10 below is the original Milestone 4 plan, kept for reference.
 
 All commands are PowerShell and start from the `heatwise-ai` folder unless a `cd` says otherwise.
 
@@ -206,9 +206,11 @@ Alternative: deploy with `-c heatwise:removal=destroy` from the start (and pass 
 
 The three log groups use `RemovalPolicy.DESTROY` and are deleted with the stack.
 
-## 10. Optional: Amazon Bedrock AgentCore Runtime
+## 10. Amazon Bedrock AgentCore Runtime (original Milestone 4 plan)
 
-`backend/agentcore_entry.py` wraps the coordinator with `BedrockAgentCoreApp` and `@app.entrypoint` (the workshop pattern in `_reference/strands-workshop/samples/05-deploy`). The logic lives in `backend/agentcore_handler.py` `run_assessment(payload, session_id)`: it validates the payload (`{"place", "forecast_days", "profile"}` or the same inside `{"request": ...}`) as an `AssessmentRequest`, runs the coordinator and returns the report JSON. It stores nothing. AgentCore Runtime was not deployed in Milestone 4, and this path is an alternative to the Lambda stacks, not part of them.
+> Superseded. AgentCore Runtime is now the deployed agent host. The steps below follow the workshop README, which targets a different CLI version than the installed `@aws/agentcore` 0.31.1 (interactive `create`/`add`, a manually copied app folder). Use the commands in the [Deployment log](#deployment-log) ("AgentCore Runtime deploy" and "API switched to AgentCore Runtime") instead.
+
+`backend/agentcore_entry.py` wraps the coordinator with `BedrockAgentCoreApp` and `@app.entrypoint` (the workshop pattern in `samples/05-deploy` of https://github.com/aws-samples/sample-strands-agents-hands-on-workshop). The logic lives in `backend/agentcore_handler.py` `run_assessment(payload, session_id)`: it validates the payload (`{"place", "forecast_days", "profile"}` or the same inside `{"request": ...}`) as an `AssessmentRequest`, runs the coordinator and returns the report JSON. It stores nothing. AgentCore Runtime was not deployed in Milestone 4, and this path is an alternative to the Lambda stacks, not part of them.
 
 Prerequisites: Node.js 20 or later, uv, AWS credentials with AgentCore access, Bedrock model access as above. Do not install the old `bedrock-agentcore-starter-toolkit`; it conflicts with the current CLI. Steps, following the workshop README:
 
@@ -277,25 +279,15 @@ These were left open in Milestone 4 and need your decision:
 6. Log retention (14 days) and DynamoDB point-in-time recovery (off).
 7. Client IP addresses in the HTTP API access log. The access log format records `$context.identity.sourceIp` for every request and keeps it for 14 days; IP addresses are commonly treated as personal data. Options: keep it (useful to spot abuse of the public API), drop the `ip` field from `_ACCESS_LOG_FORMAT` in `infrastructure/stacks/api_stack.py`, or shorten `heatwise:log_retention_days`.
 
-## Milestone 5 changes (redeploy needed)
+## Milestone 5 changes (deployed 2026-11-03 with the AgentCore switch)
 
-Milestone 5 changed the backend and one IAM statement. None of it is deployed: a read-only `describe-stacks` on 2026-11-03 shows `HeatWiseApi` at `UPDATE_COMPLETE` from the Milestone 4 deploy (last update 04:26 UTC), before these changes.
+Milestone 5 changed the backend and one IAM statement. Both were deployed with the `HeatWiseApi` update that switched the worker to AgentCore Runtime (Deployment log). `/api/metrics` returned the new fields afterwards (`assessments_completed`, `checklist.items_available`).
 
-- New routes in the Lambda code: `POST /api/reports/{report_id}/checklist` and `GET /api/evaluation`, plus new `GET /api/metrics` fields. The deployed API Lambda does not have them, so the Impact screen and the Plan checkboxes only work against a local API until you redeploy.
+- New routes in the Lambda code: `POST /api/reports/{report_id}/checklist` and `GET /api/evaluation`, plus new `GET /api/metrics` fields.
 - IAM: the API role gets a new statement, `dynamodb:UpdateItem` on the assessments table ARN only (no index ARN), in `infrastructure/stacks/api_stack.py` (test `test_api_role_checklist_update`). Without it, a checklist update on the deployed API would fail with a 500 even after a code-only update.
 - The evaluation results file (`backend/evaluation/results/evaluation-results.json`) is copied into the asset with `backend/`. `strands-agents-evals` is a dev/eval extra and is not in `infrastructure/lambda-requirements.txt`.
 
-To roll it out (a user-approved step: it changes live resources and asks you to confirm the IAM change):
-
-```powershell
-.venv\Scripts\python.exe infrastructure\scripts\build_lambda_asset.py
-cd infrastructure
-.\.venv\Scripts\Activate.ps1
-npx --yes aws-cdk@2.1147.0 diff HeatWiseApi -c heatwise:removal=destroy
-npx --yes aws-cdk@2.1147.0 deploy HeatWiseApi -c heatwise:removal=destroy
-```
-
-Pass the same `-c heatwise:removal=destroy` the first deploy used (see the log below). Only `HeatWiseApi` changes; `HeatWiseData` has no Milestone 5 change.
+To redeploy, use the command in the Deployment log entry "API switched to AgentCore Runtime". It passes both `-c heatwise:removal=destroy` and `-c heatwise:agentcore_runtime_arn=<arn>`. A deploy without the ARN context moves the agents back into the worker Lambda.
 
 Integrity warning: the deployed API has no authentication, and `/api/history` lists report ids. After this redeploy, anyone with the URL can tick or untick checklist items on any listed report. Treat the Impact screen's "checklist items completed" count on the deployed API as untrustworthy until auth is added (decision 1). Throttling limits volume, not integrity.
 
@@ -308,3 +300,35 @@ Integrity warning: the deployed API has no authentication, and `/api/history` li
 - Smoke test: `GET /api/health` returned ok (agent_mode bedrock, open_meteo). A live Nagpur assessment succeeded in 16.4 s worker time (23 s wall-clock): status complete, risk high, verification passed, 0 revisions, live Open-Meteo data. `/api/history` listed it.
 - Incident: on the first deploy both Lambdas got a partial 1,400-file zip (no `fastapi`/`mangum`), and every route returned 500 (`Runtime.ImportModuleError: No module named 'mangum'`). An earlier interrupted `cdk diff` had staged a partial copy under the full asset's hash. CDK uploaded it, and later deploys skipped the upload as "no changes". Fix: `build_lambda_asset.py` now writes a `BUILD_ID.txt` marker on every build, so every build gets a new asset hash. Don't interrupt `synth`/`diff`/`deploy` while they stage assets.
 - Not done yet: AWS Budgets alarm (it needs a notification email).
+
+**2026-11-03, AgentCore Runtime deploy (us-east-1)**
+- Project `HeatWiseAC/` created with the installed `@aws/agentcore` CLI 0.31.1. Its commands differ from the workshop README (section 10): non-interactive flags, and `deploy` runs CDK. Steps used:
+  ```powershell
+  .venv\Scripts\python.exe infrastructure\scripts\stage_agentcore_app.py   # copies backend/, writes main.py, pyproject.toml, bedrock-nova-policy.json
+  cd HeatWiseAC
+  agentcore validate
+  agentcore package --runtime heatwise_agent      # uv, aarch64 manylinux, no Docker; 29.44 MB zip
+  agentcore deploy --diff --json                  # preview
+  agentcore deploy -y --json
+  ```
+- Agent `heatwise_agent`: CodeZip, PYTHON_3_13, entry `main.py` -> `backend/agentcore_entry.py`, HTTP protocol, PUBLIC network, AWS_IAM inbound auth. Env: `BEDROCK_MODEL_ID=us.amazon.nova-2-lite-v1:0`, `WEATHER_PROVIDER=open_meteo`, `AGENT_MODE=bedrock`, `SESSION_STORAGE=none`, `LOG_LEVEL=INFO`.
+- Created: stack `AgentCore-HeatWiseAC-default`, runtime `HeatWiseAC_heatwise_agent`, one execution role with the CLI default policy and the scoped `bedrock-nova-policy.json`. The CLI default policy allows Bedrock InvokeModel on `foundation-model/*` and `inference-profile/*` in the account, so the scoped policy does not narrow access. To narrow it, supply your own `executionRoleArn`.
+- Smoke test (boto3 `invoke_agent_runtime`, JSON body unchanged): HTTP 200 in 24.0 s; Nagpur report complete, risk high, verification passed, 0 revisions, live Open-Meteo data; all five agents in the trace. The other runtime in the account (`deciderkit_agent`) was not changed.
+- Not yet done: the HTTP API and dashboard still use the Lambda worker; wiring the API to `invoke_agent_runtime` is the next step.
+- Teardown (from `HeatWiseAC/`): `agentcore remove all -y` (local config only), then `agentcore deploy -y --json` (deletes the runtime and its stack).
+
+**2026-11-03, API switched to AgentCore Runtime**
+- The agents now run only on AgentCore Runtime (`HeatWiseAC_heatwise_agent`). The worker Lambda runs with `AGENT_MODE=agentcore`. It calls `invoke_agent_runtime` (`backend/agents/agentcore_client.py`), stores the report and updates the job. The HTTP API and dashboard contract (`POST /api/assessments`, then poll the job) is unchanged.
+- Why a worker is still needed: an HTTP API integration times out at 30 s (the API Lambda's timeout is 29 s), and an AgentCore run takes about 20-25 s, so the API can't wait for it synchronously.
+- Worker IAM in this mode: `bedrock-agentcore:InvokeAgentRuntime` on the runtime ARN and `<arn>/runtime-endpoint/*` only. The Bedrock model and sessions-bucket statements are removed. `HeatWiseData` keeps its sessions-bucket exports (`export_value`), so the stack update doesn't fail with "export in use".
+- This redeploy also shipped the Milestone 5 API (checklist progress, `/api/evaluation`, new metrics fields).
+- Deploy command from now on. Without the ARN context the stack goes back to running the agents in the worker Lambda:
+  ```powershell
+  .venv\Scripts\python.exe infrastructure\scripts\build_lambda_asset.py
+  cd infrastructure; .\.venv\Scripts\Activate.ps1
+  $arn = (aws bedrock-agentcore-control list-agent-runtimes --region us-east-1 --query "agentRuntimes[?agentRuntimeName=='HeatWiseAC_heatwise_agent'].agentRuntimeArn" --output text)
+  npx --yes aws-cdk@2.1147.0 deploy HeatWiseData HeatWiseApi -c heatwise:removal=destroy -c "heatwise:agentcore_runtime_arn=$arn"
+  ```
+- Verified: `/api/health` reports `agent_mode: agentcore`. A Wardha job succeeded in 19.5 s: complete, risk high, verification passed, all five agents in the trace. Worker logs for that run show no Bedrock or Open-Meteo calls; those now happen in the runtime.
+- Tests: backend 338 passed (new `test_agentcore_client.py`, 8 tests); infra 16 passed (new `test_agentcore_mode_worker`).
+- Teardown order: destroy the CDK stacks (section 9), then the AgentCore runtime (`HeatWiseAC/`: `agentcore remove all -y`, then `agentcore deploy -y --json`).

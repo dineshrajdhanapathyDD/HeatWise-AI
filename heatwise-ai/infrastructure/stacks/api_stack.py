@@ -59,7 +59,8 @@ class HeatWiseApiStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, *, data: HeatWiseDataStack,
                  asset_dir: str, model_id: str, cors_origins: list[str], version: str,
                  log_retention_days: int = 14, throttle_rate: float = 5,
-                 throttle_burst: int = 10, max_pending_jobs: int = 20, **kwargs) -> None:
+                 throttle_burst: int = 10, max_pending_jobs: int = 20,
+                 agentcore_runtime_arn: str | None = None, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
         retention = _retention(log_retention_days)
         code = lambda_.Code.from_asset(asset_dir)
@@ -91,18 +92,51 @@ class HeatWiseApiStack(Stack):
         worker_role.add_to_policy(iam.PolicyStatement(
             actions=["dynamodb:PutItem"],
             resources=[assessments.table_arn]))
-        worker_role.add_to_policy(iam.PolicyStatement(
-            actions=["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
-            resources=[bucket.arn_for_objects(f"{prefix}/*")]))
-        # No s3:prefix condition: GetObject/HeadObject on a missing key need an unconditioned
-        # ListBucket to get 404 (Strands treats only 404/NoSuchKey as "new session"). The
-        # bucket only holds sessions, so this stays least privilege.
-        worker_role.add_to_policy(iam.PolicyStatement(
-            actions=["s3:ListBucket"],
-            resources=[bucket.bucket_arn]))
-        worker_role.add_to_policy(iam.PolicyStatement(
-            actions=["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
-            resources=bedrock_resources(model_id, self.region, self.account)))
+        if agentcore_runtime_arn:
+            # AgentCore mode: the agents run on AgentCore Runtime. The worker only invokes that one
+            # runtime (and its endpoints); it needs no Bedrock model access and no session bucket.
+            worker_role.add_to_policy(iam.PolicyStatement(
+                actions=["bedrock-agentcore:InvokeAgentRuntime"],
+                resources=[agentcore_runtime_arn, f"{agentcore_runtime_arn}/runtime-endpoint/*"]))
+        else:
+            worker_role.add_to_policy(iam.PolicyStatement(
+                actions=["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+                resources=[bucket.arn_for_objects(f"{prefix}/*")]))
+            # No s3:prefix condition: GetObject/HeadObject on a missing key need an unconditioned
+            # ListBucket to get 404 (Strands treats only 404/NoSuchKey as "new session"). The
+            # bucket only holds sessions, so this stays least privilege.
+            worker_role.add_to_policy(iam.PolicyStatement(
+                actions=["s3:ListBucket"],
+                resources=[bucket.bucket_arn]))
+            worker_role.add_to_policy(iam.PolicyStatement(
+                actions=["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+                resources=bedrock_resources(model_id, self.region, self.account)))
+
+        worker_env = {
+            "AGENT_MODE": "bedrock",
+            "WEATHER_PROVIDER": "open_meteo",
+            "BEDROCK_MODEL_ID": model_id,
+            "ASSESSMENT_STORE": "dynamodb",
+            "ASSESSMENTS_TABLE_NAME": assessments.table_name,
+            "JOB_STORE": "dynamodb",
+            "JOBS_TABLE_NAME": jobs.table_name,
+            "JOB_STALE_AFTER_SECONDS": "420",
+            "SESSION_STORAGE": "s3",
+            "SESSION_BUCKET": bucket.bucket_name,
+            "SESSION_PREFIX": prefix,
+            "HEATWISE_VERSION": version,
+            "LOG_LEVEL": "INFO",
+        }
+        if agentcore_runtime_arn:
+            for key in ("SESSION_BUCKET", "SESSION_PREFIX"):
+                worker_env.pop(key)
+            worker_env.update({
+                "AGENT_MODE": "agentcore",
+                "AGENTCORE_RUNTIME_ARN": agentcore_runtime_arn,
+                # Below the 300 s Lambda timeout so a slow run fails cleanly as a job error.
+                "AGENTCORE_TIMEOUT_SECONDS": "270",
+                "SESSION_STORAGE": "none",
+            })
 
         self.worker_fn = lambda_.Function(
             self, "Worker",
@@ -119,21 +153,7 @@ class HeatWiseApiStack(Stack):
             # Event age (120 s) + worker timeout (300 s) = JOB_STALE_AFTER_SECONDS (420 s):
             # a late event never starts a job the API already reports as timed out.
             max_event_age=Duration.seconds(120),
-            environment={
-                "AGENT_MODE": "bedrock",
-                "WEATHER_PROVIDER": "open_meteo",
-                "BEDROCK_MODEL_ID": model_id,
-                "ASSESSMENT_STORE": "dynamodb",
-                "ASSESSMENTS_TABLE_NAME": assessments.table_name,
-                "JOB_STORE": "dynamodb",
-                "JOBS_TABLE_NAME": jobs.table_name,
-                "JOB_STALE_AFTER_SECONDS": "420",
-                "SESSION_STORAGE": "s3",
-                "SESSION_BUCKET": bucket.bucket_name,
-                "SESSION_PREFIX": prefix,
-                "HEATWISE_VERSION": version,
-                "LOG_LEVEL": "INFO",
-            },
+            environment=worker_env,
         )
 
         # API role: create/read jobs, read stored assessments, update checklist progress, start the worker.
@@ -168,6 +188,8 @@ class HeatWiseApiStack(Stack):
             role=api_role,
             log_group=api_logs,
             environment={
+                # Reported by /api/health only; the API Lambda never runs agents itself.
+                "AGENT_MODE": "agentcore" if agentcore_runtime_arn else "bedrock",
                 "ASSESSMENT_STORE": "dynamodb",
                 "ASSESSMENTS_TABLE_NAME": assessments.table_name,
                 "JOB_STORE": "dynamodb",

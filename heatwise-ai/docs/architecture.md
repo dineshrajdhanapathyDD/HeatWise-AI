@@ -2,14 +2,17 @@
 
 HeatWise AI runs the same backend code in two modes. Local mode is the M3 setup with file storage. AWS mode is defined in `infrastructure/` (Python CDK). Configuration (`backend/config.py`) picks the storage and job back ends; the API contract the dashboard uses is the same in both modes. The agent workflow itself is described in [agent-workflow.md](agent-workflow.md), and the evaluation suite in [evaluation.md](evaluation.md).
 
-Deployment status (read-only `aws cloudformation describe-stacks` and `list-stack-resources` in us-east-1, run on 2026-11-03 during Milestone 5):
+**The agents run on Amazon Bedrock AgentCore Runtime.** The coordinator and its four specialists are deployed as the AgentCore runtime `HeatWiseAC_heatwise_agent` (`HeatWiseAC/`, `backend/agentcore_entry.py`). The HTTP API and a thin worker Lambda handle jobs, storage and the dashboard contract. The worker calls `invoke_agent_runtime` and runs no agents itself (`AGENT_MODE=agentcore`, `backend/agents/agentcore_client.py`).
 
-| Stack | Status | Resources | Output |
+Deployment status, us-east-1, 2026-11-03 (from the deploy outputs and the live checks in [deployment.md](deployment.md), "Deployment log"):
+
+| Stack | Created by | Contents | Output |
 |---|---|---|---|
-| `HeatWiseData` | `CREATE_COMPLETE` | 2 DynamoDB tables, 1 S3 bucket and its bucket policy, CDK metadata (5) | Table and bucket exports for `HeatWiseApi` |
-| `HeatWiseApi` | `UPDATE_COMPLETE` (last update 2026-11-03 04:26 UTC) | 2 Lambda functions, 2 IAM roles and 2 inline policies, 3 log groups, HTTP API with 1 route, 1 integration and 1 stage, 1 Lambda permission, 1 event invoke config, CDK metadata (16) | `ApiUrl` = `https://pwnenvmo71.execute-api.us-east-1.amazonaws.com` |
+| `AgentCore-HeatWiseAC-default` | `agentcore deploy` (CLI 0.31.1, CDK) | AgentCore Runtime `HeatWiseAC_heatwise_agent` (CodeZip, Python 3.13, HTTP, AWS_IAM inbound auth), its execution role and 2 policies | Runtime ARN, role ARN |
+| `HeatWiseData` | `cdk deploy` (`infrastructure/`) | 2 DynamoDB tables, 1 S3 bucket and its bucket policy | Table and bucket exports |
+| `HeatWiseApi` | `cdk deploy` with `-c heatwise:agentcore_runtime_arn=<arn>` | API Lambda, worker Lambda, 2 IAM roles, 3 log groups, HTTP API (1 route, 1 stage) | `ApiUrl` = `https://pwnenvmo71.execute-api.us-east-1.amazonaws.com` |
 
-`HeatWiseFrontend` is not deployed. The deployed stacks were built from the Milestone 4 code. The Milestone 5 additions below (checklist endpoint, evaluation endpoint, new metrics fields and the API role's `dynamodb:UpdateItem` on the assessments table) exist in the code and the CDK templates but are not deployed until `HeatWiseApi` is redeployed ([deployment.md](deployment.md), "Milestone 5 changes").
+`HeatWiseFrontend` is not deployed; the dashboard runs locally against the API. The Milestone 5 additions below are deployed (the AgentCore switch redeployed `HeatWiseApi`). The sessions bucket in `HeatWiseData` is unused in AgentCore mode, because AgentCore keeps the session per `runtimeSessionId`. It stays because the stack still exports it.
 
 ## Components added in Milestone 5
 
@@ -46,17 +49,22 @@ flowchart LR
   CF -.'/api/*', no cache.-> HTTPAPI
   HTTPAPI --> APIFN[API Lambda<br/>FastAPI via Mangum, 512 MB]
   APIFN -->|create, count pending, read| JOBS[(DynamoDB jobs<br/>TTL expires_at)]
-  APIFN -->|read reports, history| ASSESS[(DynamoDB assessments)]
-  APIFN -->|lambda:InvokeFunction<br/>InvocationType=Event| WORKER[Worker Lambda<br/>1024 MB, 300 s, 0 retries]
+  APIFN -->|read reports, history, checklist| ASSESS[(DynamoDB assessments)]
+  APIFN -->|lambda:InvokeFunction<br/>InvocationType=Event| WORKER[Worker Lambda<br/>300 s, 0 retries<br/>AGENT_MODE=agentcore]
   WORKER -->|queued -> running -> done| JOBS
   WORKER -->|PutItem record| ASSESS
-  WORKER -->|S3SessionManager, sessions/| SESS[(S3 sessions bucket)]
-  WORKER -->|InvokeModel| BR[Bedrock us.amazon.nova-2-lite-v1:0<br/>us-east-1, us-east-2, us-west-2]
-  WORKER --> OM[Open-Meteo]
-  APIFN & WORKER & HTTPAPI --> CW[CloudWatch Logs<br/>3 log groups, 14 days]
+  WORKER -->|bedrock-agentcore:InvokeAgentRuntime<br/>runtimeSessionId = heatwise-job-&lt;job id&gt;| RT
+  subgraph AC[Amazon Bedrock AgentCore Runtime]
+    RT[HeatWiseAC_heatwise_agent<br/>BedrockAgentCoreApp entrypoint]
+    RT --> COORD[Coordinator agent<br/>steering + hooks]
+    COORD --> SPEC[Weather, Risk, Planner, Safety agents]
+  end
+  SPEC -->|InvokeModel| BR[Bedrock us.amazon.nova-2-lite-v1:0]
+  SPEC --> OM[Open-Meteo]
+  APIFN & WORKER & HTTPAPI & RT --> CW[CloudWatch Logs]
 ```
 
-The API Lambda answers within its 29 s limit and never runs an assessment. The worker runs one job per async event. Neither function is in a VPC (the worker reaches Open-Meteo over the internet without a NAT gateway).
+The API Lambda answers within its 29 s limit and never runs an assessment. An HTTP API integration times out at 30 s and an AgentCore run takes about 20-25 s, so the API can't wait for the runtime in the request. The worker makes one call per job to the runtime, with no retries, since a retry would start a second billable run. It then stores the report. The worker has no Bedrock model or S3 permissions in this mode, only `InvokeAgentRuntime` on that runtime and its endpoints. Without the `heatwise:agentcore_runtime_arn` context, the same stack runs the agents inside the worker instead (the Milestone 4 layout, used by the offline tests).
 
 ## Job sequence (AWS mode)
 
@@ -67,9 +75,8 @@ sequenceDiagram
   participant A as API Lambda
   participant J as DynamoDB jobs
   participant W as Worker Lambda
-  participant B as Bedrock / Open-Meteo
+  participant R as AgentCore Runtime (agents)
   participant S as DynamoDB assessments
-  participant X as S3 sessions
   U->>G: POST /api/assessments
   G->>A: event (payload v2)
   A->>J: Query pending index (COUNT, non-stale)
@@ -84,8 +91,9 @@ sequenceDiagram
   A-->>U: 202 JobView + Location
   W->>J: UpdateItem queued -> running (conditional)
   Note over W,J: a duplicate or stale (older than 420 s) delivery fails the condition and does nothing
-  W->>X: load/save coordinator session (session id = job id)
-  W->>B: agents and tools
+  W->>R: invoke_agent_runtime(AssessmentRequest JSON, runtimeSessionId)
+  Note over R: coordinator + 4 specialists call Bedrock Nova 2 Lite and Open-Meteo
+  R-->>W: PreparednessReport JSON
   W->>S: PutItem AssessmentRecord
   W->>J: succeeded + report_id, REMOVE pending_pk
   loop poll
@@ -149,7 +157,7 @@ The Bedrock destinations come from `infrastructure/stacks/bedrock_routes.py`, wh
 - D-M4-6 Strands session managers on the coordinator only, with session id = job id: `FileSessionManager` locally, `S3SessionManager` on AWS, none when disabled; raw weather payloads stay in the specialists.
 - D-M4-7 Bedrock IAM scoped to the inference profile and its three documented destination models, taken from the model card rather than guessed.
 - D-M4-8 Three stacks (data, API, optional frontend), explicit IAM statements instead of `grant_*` helpers, explicit log groups with retention, no VPC or NAT, data RETAINed by default.
-- D-M4-9 AgentCore as an optional, undeployed path: logic in `agentcore_handler.py` (tested offline), a thin `BedrockAgentCoreApp` wrapper in `agentcore_entry.py`, `bedrock-agentcore` only as an extra and never in the Lambda asset.
+- D-M4-9 AgentCore entrypoint: logic in `agentcore_handler.py` (tested offline), a thin `BedrockAgentCoreApp` wrapper in `agentcore_entry.py`, `bedrock-agentcore` only as an extra and never in the Lambda asset. **Superseded on 2026-11-03:** AgentCore Runtime is now the deployed agent host (workshop Module 5). The `HeatWiseAC/` project is built by `infrastructure/scripts/stage_agentcore_app.py` and the `agentcore` CLI. The worker invokes it (`AGENT_MODE=agentcore`).
 - D-M4-10 Exact pins: `mangum==0.22.0`, `moto==5.2.5`, `bedrock-agentcore==1.25.2`, `aws-cdk-lib==2.275.0`, `constructs==10.8.1`, `pytest==9.2.0`, CDK CLI `aws-cdk@2.1147.0` through `npx`.
 
 Milestone 5 decisions (D-M5-1 to D-M5-12: evaluation provider, offline and live modes, rule-derived expectations, delegation-order check, `strands-agents-evals==1.8.0` in the `dev` and `eval` extras only, the knowledge test, one results file, checklist state, metrics fields, the evaluation endpoint and the Impact screen) are reflected in "Components added in Milestone 5" above and in the methodology of [evaluation.md](evaluation.md).

@@ -1,7 +1,0 @@
-{
-  "task_id": "task-heatwise-m2",
-  "task_description": "Implement HeatWise AI Milestone M2: deterministic risk rules + Community Risk Agent, Preparedness Action Planner Agent with verified guidance catalog and SKILL.md skills, Safety and Verification Agent, Coordinator Agent (agents-as-tools + ordering SteeringHandler + one-revision loop + deterministic completion), PreparednessReport, CLI assess command, one live run, and spec/README sync. Full design decisions D1-D9 and per-item detail are in d:\\github work\\SDK workshop\\.agents\\tasks\\heatwise-m2\\plan.md.",
-  "status": "pending",
-  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
-  "blocked_reason": null
-}

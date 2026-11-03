@@ -1,4 +1,0 @@
-{
-  "verdict": "APPROVED",
-  "summary": "Pass 2: all seven pass-1 findings resolved or documented. Blocking IMD issue fixed (lib/imd.ts mirrors risk_rules.imd_indication; hilly/coastal show 'IMD rule not applied', no IMD lines; tested; design.md 9.4 matches 8.2). Job reads are lock-taken snapshots (tested), polling retries 3 transient failures (tested), zero-verified needs_human_review keeps the banner (tested), per-route title and focus to main. Re-run: pytest 223 passed/4 deselected; frontend typecheck, lint, 46 tests, build all exit 0; taste lint 0/0; no range pins. Docs counts match. Non-blocking: inspector not re-run on hilly/coastal Climate; 500s without CORS headers accepted for M4."
-}

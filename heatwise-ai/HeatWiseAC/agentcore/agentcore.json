@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.agentcore.aws.dev/v1/agentcore.json",
+  "name": "HeatWiseAC",
+  "version": 1,
+  "managedBy": "CDK",
+  "tags": {
+    "agentcore:created-by": "agentcore-cli",
+    "agentcore:project-name": "HeatWiseAC"
+  },
+  "runtimes": [
+    {
+      "name": "heatwise_agent",
+      "build": "CodeZip",
+      "entrypoint": "main.py",
+      "codeLocation": "app/HeatWise/",
+      "runtimeVersion": "PYTHON_3_13",
+      "networkMode": "PUBLIC",
+      "protocol": "HTTP",
+      "description": "HeatWise AI coordinator with weather, risk, planner and safety specialists (Strands)",
+      "envVars": [
+        {
+          "name": "BEDROCK_MODEL_ID",
+          "value": "us.amazon.nova-2-lite-v1:0"
+        },
+        {
+          "name": "WEATHER_PROVIDER",
+          "value": "open_meteo"
+        },
+        {
+          "name": "AGENT_MODE",
+          "value": "bedrock"
+        },
+        {
+          "name": "SESSION_STORAGE",
+          "value": "none"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "INFO"
+        }
+      ],
+      "additionalPolicies": [
+        "bedrock-nova-policy.json"
+      ]
+    }
+  ],
+  "memories": [],
+  "knowledgeBases": [],
+  "credentials": [],
+  "evaluators": [],
+  "onlineEvalConfigs": [],
+  "agentCoreGateways": [],
+  "policyEngines": [],
+  "configBundles": [],
+  "abTests": [],
+  "harnesses": [],
+  "datasets": [],
+  "capacityProviders": [],
+  "payments": []
+}

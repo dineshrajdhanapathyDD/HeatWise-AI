@@ -65,3 +65,8 @@ class HeatWiseDataStack(Stack):
             )],
             removal_policy=policy,
         )
+        # Keep the sessions-bucket exports when HeatWiseApi stops importing them (AgentCore mode).
+        # Without this, CloudFormation refuses to drop an export the deployed API stack still
+        # imports ("export in use"). export_value() reproduces the automatic export names.
+        self.export_value(self.sessions_bucket.bucket_arn)
+        self.export_value(self.sessions_bucket.bucket_name)

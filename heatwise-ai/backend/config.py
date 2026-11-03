@@ -39,7 +39,10 @@ class Settings(BaseSettings):
     coordinator_max_tool_calls: int = Field(default=10, ge=1, le=50)
 
     # Milestone 3 API. "offline" runs scripted agents (demos and tests only, never production).
-    agent_mode: Literal["bedrock", "offline"] = Field(default="bedrock")
+    # "agentcore" runs the agents on the deployed AgentCore Runtime (the worker only invokes it).
+    agent_mode: Literal["bedrock", "offline", "agentcore"] = Field(default="bedrock")
+    agentcore_runtime_arn: str | None = Field(default=None)
+    agentcore_timeout_seconds: int = Field(default=270, ge=30, le=900)
     assessment_store_dir: str = Field(default=".data/assessments")
     api_cors_origins: list[str] = Field(default=["http://localhost:5173", "http://127.0.0.1:5173"])
     api_job_workers: int = Field(default=2, ge=1, le=8)

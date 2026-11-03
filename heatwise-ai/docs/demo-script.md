@@ -34,9 +34,11 @@ Every value on screen comes from the running app. Do not overlay numbers that ar
 | 1:55-2:10 | Agent activity tab | Scroll "Agent steps", then "Blocked tool calls". | "Agent activity is the trace: which agent called which tool, in order. Hooks block unapproved tools, and a steering handler keeps the order weather, risk, plan, safety. If safety fails, the planner gets one revision; then a person must review it." |
 | 2:10-2:20 | History | Click "History" in the navigation. | "History keeps every stored report and what changed for the same place." |
 | 2:20-2:40 | Impact | Click "Impact". Hold on the statement under the title, then the "Stored assessments" cards, then scroll to "Synthetic evaluation results". | "Impact counts what this instance has stored: assessments completed, plans, verified recommendations, checklist items done. As the screen says, HeatWise does not measure or claim real-world health outcomes. Below, separately, are results on synthetic test scenarios, each labelled offline scripted or live Nova, with its run date." |
-| 2:40-2:45 | Home or the repository page | End card with the repository URL (TODO). | "HeatWise AI, built with the Strands Agents SDK and Amazon Bedrock. The code is open source under the MIT license." |
+| 2:40-2:45 | Home or the repository page | End card with the repository URL (TODO). | "HeatWise AI, built with the Strands Agents SDK and Amazon Bedrock, with the agents deployed on Amazon Bedrock AgentCore Runtime. The code is open source under the MIT license." |
 
 ## Checks before uploading
+
+- Where the agents run in the recording: with the local demo server (`AGENT_MODE=offline`, demo weather), they run on your machine. To show AgentCore, point the dashboard at the deployed API (`VITE_API_BASE_URL`), use a real place instead of `demo-hot-dry`, and at 0:45 say "The assessment runs on Amazon Bedrock AgentCore Runtime." `/api/health` shows `agent_mode: agentcore` on the deployed API. Only say "AgentCore" over footage of a deployed run.
 
 - Length under 3:00 (target 2:45).
 - No real person's name, phone number or address is visible.

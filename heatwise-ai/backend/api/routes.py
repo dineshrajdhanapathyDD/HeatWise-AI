@@ -50,7 +50,7 @@ def health(request: Request) -> HealthView:
     s = _settings(request)
     return HealthView(
         version=APP_VERSION, weather_provider=s.weather_provider, agent_mode=s.agent_mode,
-        model_id=s.bedrock_model_id if s.agent_mode == "bedrock" else None,
+        model_id=s.bedrock_model_id if s.agent_mode in ("bedrock", "agentcore") else None,
         demo_locations=list(DEMO_LOCATIONS) if s.weather_provider == "demo" else None,
     )
 

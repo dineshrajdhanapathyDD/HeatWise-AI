@@ -28,6 +28,10 @@ def default_coordinator_factory(settings: Settings) -> CoordinatorFactory:
 
         return lambda req: build_offline_coordinator(settings, req.location, req.forecast_days,
                                                      req.profile_as_community())
+    if settings.agent_mode == "agentcore":
+        from backend.agents.agentcore_client import AgentCoreCoordinator
+
+        return lambda req: AgentCoreCoordinator(settings, req)  # type: ignore[return-value]
     return lambda req: HeatWiseCoordinator(settings)
 
 

@@ -265,3 +265,22 @@ def test_missing_asset_dir(stub_dirs, tmp_path):
     _, dist = stub_dirs
     with pytest.raises(FileNotFoundError, match="build_lambda_asset.py"):
         build_app(_context(tmp_path / "missing", dist))
+
+
+RUNTIME_ARN = f"arn:aws:bedrock-agentcore:us-east-1:{ACCOUNT}:runtime/HeatWiseAC_heatwise_agent-abc123"
+
+
+def test_agentcore_mode_worker(stub_dirs):
+    """With heatwise:agentcore_runtime_arn the worker only invokes that runtime: no Bedrock, no S3."""
+    api = _templates(stub_dirs, **{"heatwise:agentcore_runtime_arn": RUNTIME_ARN})["HeatWiseApi"]
+    statements = _statements(api)
+    actions = {a for s in statements for a in _as_list(s["Action"])}
+    assert not [a for a in actions if a.startswith(("bedrock:", "s3:"))]
+    invoke = [s for s in statements if _as_list(s["Action"]) == ["bedrock-agentcore:InvokeAgentRuntime"]]
+    assert len(invoke) == 1
+    assert _as_list(invoke[0]["Resource"]) == [RUNTIME_ARN, f"{RUNTIME_ARN}/runtime-endpoint/*"]
+    worker = next(f for k, f in api.find_resources("AWS::Lambda::Function").items() if k.startswith("Worker"))
+    env = worker["Properties"]["Environment"]["Variables"]
+    assert env["AGENT_MODE"] == "agentcore" and env["AGENTCORE_RUNTIME_ARN"] == RUNTIME_ARN
+    assert env["SESSION_STORAGE"] == "none" and "SESSION_BUCKET" not in env
+    assert int(env["AGENTCORE_TIMEOUT_SECONDS"]) < worker["Properties"]["Timeout"]

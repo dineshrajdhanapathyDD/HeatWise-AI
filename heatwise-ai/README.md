@@ -18,7 +18,7 @@ Screenshots: TODO (Home, Plan tab with checklist, Agent activity, Impact). Demo 
 - [docs/deployment.md](docs/deployment.md): build, deploy, smoke test, cost, destroy, deployment log.
 - [docs/builder-center-article.md](docs/builder-center-article.md), [docs/demo-script.md](docs/demo-script.md), [docs/submission-checklist.md](docs/submission-checklist.md): hackathon submission material.
 
-Development specs (requirements, design, task list) are kept outside this repository.
+Development specs (requirements, design, task list), written with Kiro's spec-driven workflow, are in [`.kiro/specs/heatwise-ai/`](.kiro/specs/heatwise-ai/).
 
 ## How it works
 
@@ -112,7 +112,19 @@ Settings come from environment variables or `.env` (`backend/config.py`; every v
 
 ## Deploying to AWS
 
-Python CDK in `infrastructure/`: `HeatWiseData` (DynamoDB tables, sessions bucket), `HeatWiseApi` (API and worker Lambdas, HTTP API, log groups, least-privilege roles, Bedrock scoped to the Nova 2 Lite US profile) and an optional `HeatWiseFrontend` (S3 + CloudFront). Steps, cost notes and cleanup are in [docs/deployment.md](docs/deployment.md). An optional Amazon Bedrock AgentCore entrypoint (`backend/agentcore_entry.py`) is documented there too and not deployed.
+The agents run on **Amazon Bedrock AgentCore Runtime**. The coordinator and four specialists are deployed as the runtime `HeatWiseAC_heatwise_agent` from `HeatWiseAC/`, with the `agentcore` CLI:
+
+```powershell
+.venv\Scripts\python.exe infrastructure\scripts\stage_agentcore_app.py   # copies backend/ into HeatWiseAC/app/HeatWise
+cd HeatWiseAC; agentcore validate; agentcore deploy -y --json
+```
+
+Python CDK in `infrastructure/` adds the dashboard's job API:
+- `HeatWiseData`: DynamoDB tables.
+- `HeatWiseApi`: an API Lambda, an HTTP API, and a worker Lambda that calls `invoke_agent_runtime` and stores the report. Deploy it with `-c heatwise:agentcore_runtime_arn=<arn>`. Without that, the worker runs the agents itself.
+- `HeatWiseFrontend` (optional): S3 + CloudFront.
+
+Exact commands, cost notes and teardown order are in [docs/deployment.md](docs/deployment.md), "Deployment log".
 
 ## Sources
 
@@ -149,6 +161,8 @@ backend/
   models/      weather.py, risk.py, plan.py, verification.py, report.py, trace.py
   tests/       offline unit, agent, API, AWS (moto) and evaluation tests; live tests (-m live); export_fixtures.py
   config.py, cli.py, main.py, lambda_api.py, lambda_worker.py, agentcore_handler.py, agentcore_entry.py
+  agents/agentcore_client.py   worker -> AgentCore Runtime (AGENT_MODE=agentcore)
+HeatWiseAC/    AgentCore CLI project (agentcore.json); app/ is staged by infrastructure/scripts/stage_agentcore_app.py
 frontend/src/  api/, lib/, components/, routes/ (Landing, AssessForm, JobProgress, History, Impact, report/*), test/
 infrastructure/ app.py, cdk.json, stacks/, scripts/build_lambda_asset.py, tests/, requirements*.txt, lambda-requirements.txt
 docs/          agent-workflow.md, architecture.md, evaluation.md, deployment.md, builder-center-article.md,

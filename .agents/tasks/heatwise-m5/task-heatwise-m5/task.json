@@ -1,7 +1,0 @@
-{
-  "task_id": "task-heatwise-m5",
-  "task_description": "HeatWise AI Milestone M5: synthetic evaluation suite (offline in pytest + opt-in live Bedrock Nova) with a generated evaluation report from real runs, an impact dashboard (extended /api/metrics, checklist completion API and checkboxes, Impact screen with synthetic evaluation panel), and hackathon submission docs, with spec files kept in sync. Full plan: d:\\github work\\SDK workshop\\.agents\\tasks\\heatwise-m5\\plan.md",
-  "status": "completed",
-  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
-  "blocked_reason": null
-}
