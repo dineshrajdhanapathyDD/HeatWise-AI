@@ -14,7 +14,7 @@ Deployment status, us-east-1, 2026-11-03 (from the deploy outputs and the live c
 | `HeatWiseData` | `cdk deploy` (`infrastructure/`) | 2 DynamoDB tables, 1 S3 bucket and its bucket policy | Table and bucket exports |
 | `HeatWiseApi` | `cdk deploy` with `-c heatwise:agentcore_runtime_arn=<arn>` | API Lambda, worker Lambda, 2 IAM roles, 3 log groups, HTTP API (1 route, 1 stage) | `ApiUrl` = `https://pwnenvmo71.execute-api.us-east-1.amazonaws.com` |
 
-`HeatWiseFrontend` is not deployed; the dashboard runs locally against the API. The Milestone 5 additions below are deployed (the AgentCore switch redeployed `HeatWiseApi`). The sessions bucket in `HeatWiseData` is unused in AgentCore mode, because AgentCore keeps the session per `runtimeSessionId`. It stays because the stack still exports it.
+The dashboard is hosted on AWS Amplify Hosting (app `HeatWise-AI`, https://main.dmupjpltx9cou.amplifyapp.com), built from the repo-root `amplify.yml`. The CDK `HeatWiseFrontend` stack (S3 and CloudFront) is not deployed and not used. The Milestone 5 additions below are deployed (the AgentCore switch redeployed `HeatWiseApi`). The sessions bucket in `HeatWiseData` is unused in AgentCore mode, because AgentCore keeps the session per `runtimeSessionId`. It stays because the stack still exports it.
 
 ## Components added in Milestone 5
 

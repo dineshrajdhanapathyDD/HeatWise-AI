@@ -6,9 +6,13 @@ HeatWise AI is a multi-agent heatwave preparedness assistant built with the [Str
 
 It is an informational and preparedness tool. It is not a medical diagnosis tool, an emergency dispatch system, or a substitute for official warnings. It does not send alerts or contact anyone, and it makes no claim about real-world health outcomes.
 
-Status: deployed in us-east-1 on 2026-11-03. The agents run on Amazon Bedrock AgentCore Runtime, the job API runs on AWS Lambda and API Gateway, and storage is in DynamoDB ([heatwise-ai/docs/deployment.md](heatwise-ai/docs/deployment.md), "Deployment log"). Dashboard hosting on AWS Amplify is set up through [`amplify.yml`](amplify.yml) and isn't deployed yet.
+Status: deployed in us-east-1 on 2026-11-03. The agents run on Amazon Bedrock AgentCore Runtime, the job API runs on AWS Lambda and API Gateway, and storage is in DynamoDB ([heatwise-ai/docs/deployment.md](heatwise-ai/docs/deployment.md), "Deployment log"). The dashboard is live on AWS Amplify Hosting at https://main.dmupjpltx9cou.amplifyapp.com, built from [`amplify.yml`](amplify.yml).
+
+![HeatWise AI dashboard home](screenshots/amplify-home-desktop.png)
 
 ## Architecture
+
+
 
 The diagram source is [`heatwise-ai/docs/architecture.drawio`](heatwise-ai/docs/architecture.drawio). Open it in [app.diagrams.net](https://app.diagrams.net) or with the Draw.io Integration extension in VS Code or Kiro.
 
@@ -117,7 +121,7 @@ Counts from the runs on 2026-11-03, after the AgentCore switch:
 ```powershell
 cd heatwise-ai
 .venv\Scripts\python.exe -m pytest                     # 338 passed, 4 deselected (live tests are opt-in: -m live)
-cd frontend; npm run typecheck; npm run lint; npm test; npm run build; cd ..   # 8 test files, 56 tests
+cd frontend; npm run typecheck; npm run lint; npm test; npm run build; cd ..   # 10 test files, 73 tests
 infrastructure\.venv\Scripts\python.exe -m pytest infrastructure\tests -q   # 16 passed (venv setup in heatwise-ai/docs/deployment.md)
 ```
 

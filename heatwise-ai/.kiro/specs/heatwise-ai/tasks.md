@@ -177,3 +177,19 @@ Milestones follow `design.md` Â§5.
 - External facts: the hackathon page "Strands SDK: Workshop to Ship" (builder.aws.com) was fetched in-session; its five submission items, the workshop-completion rule and the November 4 due date are in `docs/submission-checklist.md`. The page states no license requirement (MIT is in place); the separate official Rules and the Builder Center article URL were not fetched/known and are marked TODO, as are the public repo URL, the video link and screenshots.
 - Final tests (2026-11-03): backend `330 passed, 4 deselected` (320 + 10 FEAT-002 API/store tests); frontend typecheck, lint, build exit 0 and `npm test` 8 files, 56 tests (46 + 10); infrastructure 15 passed (14 + 1, background run, `.data/infra-tests.log`).
 - Gaps: M5 changes not deployed; no auth on the public API; English-only plans; synthetic evaluation with a small single live run; Bedrock price not verified; article, repo, video and workshop completion are user actions.
+
+## Post-M5 - Hosting, redesign and pricing (2026-11-03)
+
+- [x] 6.1 Dashboard on AWS Amplify Hosting
+  - App `HeatWise-AI` (`dmupjpltx9cou`), https://main.dmupjpltx9cou.amplifyapp.com, built from the repo-root `amplify.yml`. The Amplify origin was added to the API CORS list and `HeatWiseApi` was redeployed. The CDK `HeatWiseFrontend` stack stays undeployed.
+  - Open user step: the SPA rewrite rule in the Amplify console (steps in `docs/deployment.md`, section 7a). Until then, deep links return HTTP 404 and still render.
+- [x] 6.2 Frontend redesign (dark, atmospheric), same API contracts
+  - New: `src/index.css`, `lib/{palette,riskScale,weatherScene,pipeline,dashboard,impact}.ts`, `components/{AnimatedNumber,WeatherVisual,RiskGauge,AgentPipeline,Toast,toastContext,ui}.tsx`, `components/charts/WeatherTrendChart.tsx`. Home has a hero, risk overview, weather intelligence, community impact, "What should the community do?", the latest assessment and the agent pipeline. The assessment form has three steps (Place, Community, Settings and review).
+  - Data the backend does not provide (hourly forecast, per-agent live progress, cloud cover) is shown as unavailable with the field named, never invented.
+  - Playwright on the live site found and fixed: horizontal overflow on mobile from screen-reader-only tables, page titles on trailing-slash URLs, a cloud drawn without reported rain, and the NWS band caption ("NWS band: below Caution").
+  - Tests: frontend 10 files, 73 tests (`src/test/setup.ts` adds an IntersectionObserver stub and `asyncUtilTimeout: 5000`; `vite.config.ts` `testTimeout: 20_000`). Backend 338 passed, 4 deselected. Infrastructure 16 passed.
+  - Screenshots in the repo-root `screenshots/`. `amplify-history.png` is stale (skeletons) and should be retaken.
+- [x] 6.3 Pricing (article "Pricing" section)
+  - Unit prices from the AWS Price List API and the AgentCore pricing page (us-east-1, read 2026-11-03). Measured AgentCore usage from CloudWatch (5 invocations: 0.019177 vCPU-hours, 1.08249 GB-hours). Tokens from the M5 live evaluation.
+  - Estimate: about $0.016 to $0.017 per assessment (about $16 to $17 per 1,000), roughly three quarters of it model tokens. The v1/v2 microVM type is unknown, so AgentCore cost is a range.
+  - Finding: memory dominates the AgentCore cost and the measured GB-hours exceed a 20 s run, which suggests billing continues while the session is open (not confirmed). Future work: `StopRuntimeSession` after the report is stored, or a shorter `--idle-timeout`.

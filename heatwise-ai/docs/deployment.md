@@ -137,9 +137,25 @@ npm run build
 
 `HeatWiseFrontend.SiteUrl` is the CloudFront URL. Keep passing `-c heatwise:frontend=true` to later `diff`, `deploy` and `destroy` commands; without it the stack is not part of the app and is neither updated nor destroyed. The `BucketDeployment` construct creates its own Lambda, layer and role with CDK-generated grants (`s3:GetObject*`, `s3:List*`, `s3:PutObject`, `s3:DeleteObject*` and similar on the bootstrap assets bucket and the site bucket only, plus the AWS managed `AWSLambdaBasicExecutionRole`).
 
+## 7a. Web app on AWS Amplify Hosting (deployed)
+
+This is how the dashboard is hosted. The CloudFront stack in section 7 is not deployed.
+
+- Amplify app `HeatWise-AI` (app id `dmupjpltx9cou`), branch `main`, URL https://main.dmupjpltx9cou.amplifyapp.com.
+- Connected to the GitHub repo. The build spec is the repo-root `amplify.yml` (monorepo app root `heatwise-ai/frontend`). Each push to `main` rebuilds the site.
+- The site calls the HTTP API across origins, so `https://main.dmupjpltx9cou.amplifyapp.com` is in the API's CORS allow list (`infrastructure/cdk.json`), deployed with `HeatWiseApi`.
+
+Open step (console): add the single-page-app rewrite rule. Without it, deep links such as `/assess` and `/history` return HTTP 404, although the page still renders. In the Amplify console, open the app, then Hosting, then Rewrites and redirects, and add:
+
+| Source address | Target address | Type |
+|---|---|---|
+| `</^[^.]+$\|\.(?!(css\|gif\|ico\|jpg\|js\|png\|txt\|svg\|woff\|woff2\|ttf\|map\|json\|webp)$)([^.]+$)/>` | `/index.html` | 200 (Rewrite) |
+
+(In the console, type the source without the backslashes shown before each `|`. They are only there to keep this Markdown table intact.)
+
 ## 8. Cost
 
-No prices are quoted here; check the official pricing pages for your Region.
+Verified us-east-1 unit prices and a per-assessment estimate from measured usage (about $0.016 to $0.017 per assessment with AgentCore Runtime) are in the "Pricing" section of [builder-center-article.md](builder-center-article.md#pricing). The notes below describe what is billed. They were written for the Lambda-hosted agents in Milestone 4; with AgentCore, the worker only waits on `invoke_agent_runtime` (about 20-25 s), and AgentCore Runtime CPU and memory are billed in addition.
 
 Idle (no traffic):
 
