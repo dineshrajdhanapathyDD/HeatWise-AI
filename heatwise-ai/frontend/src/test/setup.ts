@@ -1,5 +1,9 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
+
+// findBy*/waitFor default to 1 s. On a low-memory machine running ten jsdom files in parallel, a route change
+// can take longer, so failing tests named a different navigation each run. Assertions are unchanged.
+configure({ asyncUtilTimeout: 5000 });
 import { afterEach, vi } from "vitest";
 
 // jsdom has no layout: Recharts' ResponsiveContainer needs a ResizeObserver to exist.

@@ -88,7 +88,8 @@ export function ForecastChart({ days, terrain }: Props) {
           ? "Dashed lines mark IMD criteria for an indication only, not an official declaration."
           : `${imdNotAppliedText(terrain)}, so no IMD lines are drawn.`}
       </figcaption>
-      <table className="sr-only">
+      <div className="sr-only">
+      <table>
         <caption>Forecast daily maximum and minimum temperature</caption>
         <thead>
           <tr>
@@ -107,6 +108,7 @@ export function ForecastChart({ days, terrain }: Props) {
           ))}
         </tbody>
       </table>
+      </div>
     </figure>
   );
 }

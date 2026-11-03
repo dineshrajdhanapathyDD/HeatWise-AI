@@ -188,17 +188,19 @@ function RiskDistribution({ metrics }: { metrics: MetricsView }) {
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <table className="sr-only">
-        <caption>Stored reports by risk category</caption>
-        <tbody>
-          {data.map((d) => (
-            <tr key={d.category}>
-              <th scope="row">{d.label}</th>
-              <td className="text-right">{d.count}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="sr-only">
+        <table>
+          <caption>Stored reports by risk category</caption>
+          <tbody>
+            {data.map((d) => (
+              <tr key={d.category}>
+                <th scope="row">{d.label}</th>
+                <td className="text-right">{d.count}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }
@@ -316,7 +318,8 @@ function RiskTrend({ items }: { items: HistoryItem[] }) {
               </ScatterChart>
             </ResponsiveContainer>
           </div>
-          <table className="sr-only">
+          <div className="sr-only">
+          <table>
             <caption>Risk category of each stored report over time</caption>
             <thead>
               <tr>
@@ -335,6 +338,7 @@ function RiskTrend({ items }: { items: HistoryItem[] }) {
               ))}
             </tbody>
           </table>
+          </div>
         </>
       ) : (
         <p className="mt-3 text-body text-muted">The trend appears once reports with a risk category are stored.</p>

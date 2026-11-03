@@ -20,7 +20,9 @@ const REPORT_TABS: Record<string, string> = {
   activity: "Agent activity",
 };
 
-function routeTitle(pathname: string): string {
+function routeTitle(rawPath: string): string {
+  // Amplify Hosting redirects deep links to a trailing slash ("/history/"); treat both forms alike.
+  const pathname = rawPath.length > 1 ? rawPath.replace(/\/+$/, "") : rawPath;
   if (pathname === "/") return "Home";
   if (pathname === "/assess") return "New assessment";
   if (pathname === "/history") return "History";

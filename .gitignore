@@ -2,3 +2,4 @@
 _reference/
 .agents/
 .vscode/
+.playwright-mcp/

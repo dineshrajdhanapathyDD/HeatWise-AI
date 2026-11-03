@@ -19,6 +19,12 @@ describe("Landing and shell", () => {
     expect(await screen.findByText(/No assessments are stored yet/)).toBeInTheDocument();
   });
 
+  it("names the screen correctly on a trailing-slash URL (Amplify deep links)", async () => {
+    mockApi({ "GET /api/history": { body: { items: [], total: 0, limit: 20, offset: 0 } } });
+    renderApp("/history/");
+    await waitFor(() => expect(document.title).toBe("History - HeatWise AI"));
+  });
+
   it("sets a per-screen title and moves focus to main after navigation", async () => {
     mockApi({ "GET /api/history": { body: { items: [], total: 0, limit: 1, offset: 0 } } });
     renderApp("/");

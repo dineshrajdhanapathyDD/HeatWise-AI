@@ -245,7 +245,13 @@ function RiskOverview({ report }: { report: PreparednessReport }) {
           icon={Thermometer}
           accent="#ff7a45"
           value={<AnimatedNumber value={risk?.heat_index_c} format={temp} />}
-          caption={risk?.heat_index_band ? `NWS band: ${risk.heat_index_band}` : "Not computed"}
+          caption={
+            risk?.heat_index_band
+              ? `NWS band: ${risk.heat_index_band}`
+              : risk?.heat_index_c !== null && risk?.heat_index_c !== undefined
+                ? "NWS band: below Caution"
+                : "Not computed"
+          }
         />
         <MetricCard
           index={1}

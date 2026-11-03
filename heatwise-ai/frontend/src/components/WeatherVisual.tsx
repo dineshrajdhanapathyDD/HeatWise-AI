@@ -66,12 +66,13 @@ export function WeatherVisual({ scene, size = 220 }: { scene: WeatherScene; size
         </g>
       )}
 
-      {(scene === "warm" || scene === "mild" || scene === "rain") && (
-        <g className={scene === "rain" ? "hw-cloud-slow" : "hw-cloud"}>
+      {/* A cloud only where the data supports it: rain was reported. There is no cloud-cover field. */}
+      {scene === "rain" && (
+        <g className="hw-cloud-slow">
           <path
             d="M62 168c-17 0-30-12-30-27s13-27 30-27c4-21 22-36 44-36 20 0 37 13 42 31 3-1 7-1 10-1 18 0 32 13 32 30s-14 30-32 30z"
             fill="url(#hw-cloud-fill)"
-            opacity={scene === "rain" ? 0.95 : 0.8}
+            opacity={0.95}
           />
         </g>
       )}

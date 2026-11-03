@@ -84,7 +84,8 @@ export function WeatherTrendChart({ days, caption }: { days: DailyForecast[]; ca
         </ResponsiveContainer>
       </div>
       {caption && <figcaption className="mt-2 text-small text-muted">{caption}</figcaption>}
-      <table className="sr-only">
+      <div className="sr-only">
+      <table>
         <caption>Forecast daily maximum, minimum and feels-like maximum</caption>
         <thead>
           <tr>
@@ -105,6 +106,7 @@ export function WeatherTrendChart({ days, caption }: { days: DailyForecast[]; ca
           ))}
         </tbody>
       </table>
+      </div>
     </figure>
   );
 }
