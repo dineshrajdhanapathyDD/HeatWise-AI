@@ -11,6 +11,7 @@ Status: deployed in us-east-1 on 2026-11-03. The agents run on Amazon Bedrock Ag
 ![HeatWise AI dashboard home](screenshots/amplify-home-desktop.png)
 
 ## Architecture
+<img width="1719" height="751" alt="heatwise drawio" src="https://github.com/user-attachments/assets/a4ab0b64-fdaf-4720-8c65-0a37a6341c8e" />
 
 
 
