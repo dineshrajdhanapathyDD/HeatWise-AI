@@ -3,6 +3,7 @@ import { Link, Navigate, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "./components/AppShell";
 import { HealthProvider } from "./components/HealthProvider";
+import { ToastProvider } from "./components/Toast";
 import { AssessForm } from "./routes/AssessForm";
 import { History } from "./routes/History";
 import { Impact } from "./routes/Impact";
@@ -17,10 +18,10 @@ import { RiskView } from "./routes/report/RiskView";
 function NotFound() {
   return (
     <>
-      <h1 className="text-title font-medium">Page not found</h1>
-      <p className="mt-2 text-body">
+      <h1 className="text-title font-semibold">Page not found</h1>
+      <p className="mt-2 text-body text-muted">
         There is nothing at this address.{" "}
-        <Link to="/" className="underline">
+        <Link to="/" className="text-ink underline">
           Go to the home screen
         </Link>
         .
@@ -33,6 +34,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <HealthProvider>
+        <ToastProvider>
         <Routes>
           <Route element={<AppShell />}>
             <Route index element={<Landing />} />
@@ -50,6 +52,7 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
+        </ToastProvider>
       </HealthProvider>
     </MotionConfig>
   );

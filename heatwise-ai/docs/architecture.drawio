@@ -1,0 +1,156 @@
+<mxfile host="65bd71144e">
+    <diagram id="heatwise-aws" name="HeatWise AI - AWS">
+        <mxGraphModel dx="533" dy="375" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="820" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="&lt;b&gt;HeatWise AI - AWS architecture&lt;/b&gt;&lt;br&gt;Agents on Amazon Bedrock AgentCore Runtime, us-east-1" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontColor=#232F3E;" vertex="1" parent="1">
+                    <mxGeometry x="132" y="70" width="900" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="AWS Cloud - us-east-1" style="points=[];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=0;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_region;strokeColor=#00A4A6;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="390" y="140" width="1240" height="680" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="&lt;b&gt;Amazon Bedrock AgentCore Runtime&lt;/b&gt;&lt;br&gt;HeatWiseAC_heatwise_agent (CodeZip, Python 3.13, AWS_IAM auth)&lt;br&gt;BedrockAgentCoreApp + @app.entrypoint" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E6F6F7;strokeColor=#01A88D;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+                    <mxGeometry x="990" y="250" width="420" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;b&gt;Coordinator agent&lt;/b&gt; (Strands)&lt;br&gt;agents-as-tools, steering: weather → risk → plan → safety, one revision" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#01A88D;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1010" y="330" width="380" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="&lt;b&gt;Weather Intelligence&lt;/b&gt;&lt;br&gt;get_weather, get_forecast,&lt;br&gt;get_weather_alerts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6B7B;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1010" y="410" width="185" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="&lt;b&gt;Community Risk&lt;/b&gt;&lt;br&gt;deterministic rules&lt;br&gt;(heat index, IMD criteria)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6B7B;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1205" y="410" width="185" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="&lt;b&gt;Action Planner&lt;/b&gt;&lt;br&gt;AgentSkills (SKILL.md),&lt;br&gt;verified guidance catalog" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6B7B;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1010" y="485" width="185" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="&lt;b&gt;Safety &amp;amp; Verification&lt;/b&gt;&lt;br&gt;deterministic pass/fail&lt;br&gt;(sources, freshness, banned content)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6B7B;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1205" y="485" width="185" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Hooks on every agent: GuardrailHook (tool allowlist, input validation, call cap) and EvidenceLedgerHook (numbers come from tool results, not model text)" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#5A6B7B;" vertex="1" parent="1">
+                    <mxGeometry x="1010" y="565" width="380" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Community volunteer&lt;br&gt;(browser)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="390" width="40" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="AWS Amplify Hosting&lt;br&gt;React dashboard (amplify.yml)" style="sketch=0;points=[];outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.amplify;" vertex="1" parent="1">
+                    <mxGeometry x="470" y="200" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Amazon API Gateway&lt;br&gt;HTTP API (throttled)" style="sketch=0;points=[];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+                    <mxGeometry x="470" y="400" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="API Lambda&lt;br&gt;FastAPI (Mangum), 29 s" style="sketch=0;points=[];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+                    <mxGeometry x="640" y="400" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Worker Lambda&lt;br&gt;AGENT_MODE=agentcore&lt;br&gt;(no Bedrock access)" style="sketch=0;points=[];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+                    <mxGeometry x="820" y="400" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Amazon DynamoDB&lt;br&gt;jobs (TTL)" style="sketch=0;points=[];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+                    <mxGeometry x="640" y="620" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Amazon DynamoDB&lt;br&gt;assessments (reports,&lt;br&gt;history, checklist)" style="sketch=0;points=[];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+                    <mxGeometry x="820" y="620" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Amazon Bedrock&lt;br&gt;Nova 2 Lite&lt;br&gt;us.amazon.nova-2-lite-v1:0" style="sketch=0;points=[];outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+                    <mxGeometry x="1520" y="310" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="Amazon CloudWatch Logs&lt;br&gt;API, worker, runtime" style="sketch=0;points=[];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch_2;" vertex="1" parent="1">
+                    <mxGeometry x="1510" y="670" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="Defined as code: AWS CDK (Python) for HeatWiseData + HeatWiseApi, agentcore CLI for the runtime. Least-privilege IAM per function; the worker may only InvokeAgentRuntime on this runtime." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontColor=#5A6B7B;" vertex="1" parent="1">
+                    <mxGeometry x="420" y="740" width="560" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="&lt;b&gt;Open-Meteo&lt;/b&gt;&lt;br&gt;forecast + geocoding API&lt;br&gt;(live weather, no key)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1680" y="450" width="170" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="IMD (mausam.imd.gov.in)&lt;br&gt;linked for official warnings;&lt;br&gt;not called by the app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#999999;dashed=1;fontSize=10;fontColor=#5A6B7B;" vertex="1" parent="1">
+                    <mxGeometry x="1680" y="550" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="1. load dashboard (HTTPS)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;" edge="1" parent="1" source="11" target="12">
+                    <mxGeometry x="-0.3171" y="-10" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="220" y="230"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="2. POST /api/assessments,&lt;br&gt;poll job (JSON, CORS)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;" edge="1" parent="1" source="11" target="13">
+                    <mxGeometry x="-0.2174" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" parent="1" source="13" target="14">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="3. async invoke&lt;br&gt;(Event, job id)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;" edge="1" parent="1" source="14" target="15">
+                    <mxGeometry x="-0.1692" y="20" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="760" y="420"/>
+                            <mxPoint x="760" y="420"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="27" value="create, poll" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;startArrow=block;" edge="1" parent="1" source="14" target="16">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="reports, history" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;startArrow=block;" edge="1" parent="1" source="14" target="17">
+                    <mxGeometry x="-0.2727" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="750" y="440"/>
+                            <mxPoint x="750" y="530"/>
+                            <mxPoint x="850" y="530"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="29" value="status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;" edge="1" parent="1" source="15" target="16">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="830" y="570"/>
+                            <mxPoint x="690" y="570"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="5. save report" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;" edge="1" parent="1" source="15" target="17">
+                    <mxGeometry x="-0.25" y="10" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="870" y="520"/>
+                            <mxPoint x="870" y="520"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="4. InvokeAgentRuntime&lt;br&gt;(AssessmentRequest JSON,&lt;br&gt;runtimeSessionId)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;startArrow=none;strokeColor=#01A88D;strokeWidth=2;" edge="1" parent="1" source="15" target="4">
+                    <mxGeometry x="-0.1538" y="30" relative="1" as="geometry">
+                        <mxPoint x="-25" y="-30" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="Converse (Nova 2 Lite)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;strokeColor=#01A88D;" edge="1" parent="1" source="4" target="18">
+                    <mxGeometry x="-0.1111" y="-10" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="1450" y="340"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="weather tools (HTTPS)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;" edge="1" parent="1" source="4" target="21">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1450" y="485"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="logs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;endArrow=block;dashed=1;strokeColor=#999999;" edge="1" parent="1" source="4" target="19">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1200" y="700"/>
+                            <mxPoint x="1530" y="700"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

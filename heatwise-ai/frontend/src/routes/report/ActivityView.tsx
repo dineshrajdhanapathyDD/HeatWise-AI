@@ -3,13 +3,14 @@ import { ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 
 import type { AgentTraceEntry, PreparednessReport } from "../../api/types";
+import { AgentPipeline } from "../../components/AgentPipeline";
 import { formatDuration } from "../../lib/format";
 import { riskLabel, statusLabel } from "../../lib/risk";
 import { renderablePlanItems } from "../../lib/safety";
 import { type Step, groupTrace } from "../../lib/trace";
 import { useReportRecord } from "./reportContext";
 
-const CARD = "rounded-card border border-line bg-surface p-5";
+const CARD = "glass rounded-card p-5";
 
 const AGENT_NAMES: Record<string, string> = {
   coordinator: "Coordinator",
@@ -148,6 +149,7 @@ export function ActivityView() {
 
   return (
     <div className="space-y-6">
+      <AgentPipeline input={{ phase: "finished", report }} headingId="activity-pipeline-h" title="Agent workflow for this report" />
       <section aria-labelledby="steps-h">
         <h2 id="steps-h" className="text-section font-medium">
           Agent steps

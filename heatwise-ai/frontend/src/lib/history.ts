@@ -1,6 +1,29 @@
-import type { HistoryChanges, MetricsView } from "../api/types";
-import { formatDelta } from "./format";
+import type { HistoryChanges, HistoryItem, MetricsView } from "../api/types";
+import { formatDelta, placeName } from "./format";
 import { indicatorLabel, riskLabel } from "./risk";
+
+export type DateFilter = "any" | "7d" | "30d";
+
+export interface HistoryFilters {
+  query: string;
+  risk: string;
+  status: string;
+  date: DateFilter;
+}
+
+/** Client-side filter over the loaded reports: place text, risk category, status and age. */
+export function filterHistory(items: HistoryItem[], f: HistoryFilters, now = Date.now()): HistoryItem[] {
+  const q = f.query.trim().toLowerCase();
+  const maxAgeMs = f.date === "7d" ? 7 * 864e5 : f.date === "30d" ? 30 * 864e5 : Infinity;
+  return items.filter((i) => {
+    const text = `${placeName([i.location_name ?? i.query, i.admin1, i.country])} ${i.query}`.toLowerCase();
+    if (q && !text.includes(q)) return false;
+    if (f.risk !== "all" && i.risk_category !== f.risk) return false;
+    if (f.status !== "all" && i.status !== f.status) return false;
+    if (maxAgeMs !== Infinity && now - new Date(i.created_at).getTime() > maxAgeMs) return false;
+    return true;
+  });
+}
 
 /** "Risk High → Very high; heat index +2.1 °C; max forecast unchanged; added: limited water access". */
 export function changesInWords(changes: HistoryChanges | null): string {

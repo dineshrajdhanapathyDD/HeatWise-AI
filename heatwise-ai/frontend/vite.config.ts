@@ -10,5 +10,8 @@ export default defineConfig({
     setupFiles: "./src/test/setup.ts",
     globals: true,
     css: false,
+    // Chart-heavy screens render slowly in jsdom on low-memory machines when ten files run in
+    // parallel; the first test of a file then exceeds the 5 s default. Assertions are unchanged.
+    testTimeout: 20_000,
   },
 });

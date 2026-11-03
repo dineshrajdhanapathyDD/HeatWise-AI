@@ -1,7 +1,8 @@
 import {
+  Area,
   CartesianGrid,
+  ComposedChart,
   Line,
-  LineChart,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -12,16 +13,15 @@ import {
 import type { DailyForecast } from "../api/types";
 import { DASH, formatDay, formatTemp } from "../lib/format";
 import { IMD_HEAT_WAVE_C, IMD_PLAINS_C, IMD_SEVERE_C, imdApplies, imdNotAppliedText } from "../lib/imd";
+import { PALETTE, TICK, TOOLTIP_STYLE } from "../lib/palette";
 
 interface Props {
   days: DailyForecast[];
   terrain: string | null | undefined;
 }
 
-const TICK = { fill: "#6b6b6b", fontSize: 12 };
-
 /**
- * Daily max in the one data hue, daily min in neutral grey, IMD reference lines dashed and labelled.
+ * Daily max in the heat hue, daily min in cyan, IMD reference lines dashed and labelled.
  * The SVG is hidden from assistive technology; a visually hidden table carries the same data.
  */
 export function ForecastChart({ days, terrain }: Props) {
@@ -44,52 +44,43 @@ export function ForecastChart({ days, terrain }: Props) {
 
   return (
     <figure>
-      <div aria-hidden="true" className="h-[240px] w-full">
+      <div aria-hidden="true" className="h-[260px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 8, right: imd ? 132 : 16, bottom: 0, left: 0 }}>
-            <CartesianGrid vertical={false} stroke="#e5e5e5" />
-            <XAxis dataKey="day" tick={TICK} tickLine={false} axisLine={{ stroke: "#d4d4d4" }} interval="preserveStartEnd" />
-            <YAxis
-              domain={[lo, hi]}
-              ticks={ticks}
-              tick={TICK}
-              tickLine={false}
-              axisLine={false}
-              width={40}
-              unit="°"
-            />
+          <ComposedChart data={data} margin={{ top: 8, right: imd ? 132 : 16, bottom: 0, left: 0 }}>
+            <defs>
+              <linearGradient id="hw-report-max" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={PALETTE.heat} stopOpacity={0.35} />
+                <stop offset="100%" stopColor={PALETTE.heat} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid vertical={false} stroke={PALETTE.grid} />
+            <XAxis dataKey="day" tick={TICK} tickLine={false} axisLine={{ stroke: PALETTE.axis }} interval="preserveStartEnd" />
+            <YAxis domain={[lo, hi]} ticks={ticks} tick={TICK} tickLine={false} axisLine={false} width={40} unit="°" />
             {references.map((r) => (
               <ReferenceLine
                 key={r.y}
                 y={r.y}
-                stroke="#8a8a8a"
+                stroke={PALETTE.reference}
                 strokeDasharray="4 4"
-                label={{ value: r.label, position: "right", fill: "#6b6b6b", fontSize: 12 }}
+                label={{ value: r.label, position: "right", fill: PALETTE.muted, fontSize: 12 }}
               />
             ))}
             <Tooltip
               formatter={(v) => (typeof v === "number" ? formatTemp(v) : DASH)}
-              contentStyle={{ border: "1px solid #e6e6e6", borderRadius: 6, fontSize: 12 }}
+              contentStyle={TOOLTIP_STYLE}
+              labelStyle={{ color: PALETTE.muted }}
             />
-            <Line
-              type="linear"
-              dataKey="min"
-              name="Daily minimum"
-              stroke="#8a8a8a"
-              strokeWidth={2}
-              dot={false}
-              isAnimationActive={false}
-            />
-            <Line
+            <Area
               type="linear"
               dataKey="max"
               name="Daily maximum"
-              stroke="#b3411c"
-              strokeWidth={2}
-              dot={false}
+              stroke={PALETTE.heat}
+              strokeWidth={2.5}
+              fill="url(#hw-report-max)"
               isAnimationActive={false}
             />
-          </LineChart>
+            <Line type="linear" dataKey="min" name="Daily minimum" stroke={PALETTE.cyan} strokeWidth={2} dot={false} isAnimationActive={false} />
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
       <figcaption className="mt-2 text-small text-muted">

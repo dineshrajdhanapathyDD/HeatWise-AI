@@ -111,4 +111,4 @@ What the numbers say, and what they do not:
 
 ## Try it
 
-Offline quickstart, live mode and the evaluation commands are in the [README](../README.md). The code is MIT licensed ([LICENSE](../LICENSE)).
+Offline quickstart, live mode and the evaluation commands are in the [README](../../README.md). The code is MIT licensed ([LICENSE](../../LICENSE)).

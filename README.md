@@ -6,19 +6,47 @@ HeatWise AI is a multi-agent heatwave preparedness assistant built with the [Str
 
 It is an informational and preparedness tool. It is not a medical diagnosis tool, an emergency dispatch system, or a substitute for official warnings. It does not send alerts or contact anyone, and it makes no claim about real-world health outcomes.
 
-Status: Milestone 5 (evaluation suite, Impact screen, submission docs). `HeatWiseData` and `HeatWiseApi` are deployed in us-east-1 from the Milestone 4 code; the Milestone 5 endpoints need a redeploy ([docs/deployment.md](docs/deployment.md)).
+Status: deployed in us-east-1 on 2026-11-03. The agents run on Amazon Bedrock AgentCore Runtime, the job API runs on AWS Lambda and API Gateway, and storage is in DynamoDB ([heatwise-ai/docs/deployment.md](heatwise-ai/docs/deployment.md), "Deployment log"). Dashboard hosting on AWS Amplify is set up through [`amplify.yml`](amplify.yml) and isn't deployed yet.
 
-Screenshots: TODO (Home, Plan tab with checklist, Agent activity, Impact). Demo video: TODO (public link, under 3 minutes; script in [docs/demo-script.md](docs/demo-script.md)).
+## Architecture
+
+The diagram source is [`heatwise-ai/docs/architecture.drawio`](heatwise-ai/docs/architecture.drawio). Open it in [app.diagrams.net](https://app.diagrams.net) or with the Draw.io Integration extension in VS Code or Kiro.
+
+```mermaid
+flowchart LR
+  U[Community volunteer<br/>browser] -->|dashboard| AMP[AWS Amplify Hosting<br/>React + Vite]
+  U -->|JSON API| GW[API Gateway HTTP API]
+  GW --> API[API Lambda<br/>FastAPI]
+  API -->|async invoke| W[Worker Lambda]
+  API <--> DDB[(DynamoDB<br/>jobs, assessments)]
+  W --> DDB
+  W -->|InvokeAgentRuntime| AC
+  subgraph AC[Amazon Bedrock AgentCore Runtime]
+    C[Coordinator agent] --> S[Weather, Risk,<br/>Planner, Safety agents]
+  end
+  S --> BR[Amazon Bedrock<br/>Nova 2 Lite]
+  S --> OM[Open-Meteo]
+```
+
+The worker exists because an HTTP API request times out at 30 s and an agent run takes about 20-25 s. Details are in [heatwise-ai/docs/architecture.md](heatwise-ai/docs/architecture.md).
+
+## Repository layout
+
+- `heatwise-ai/`: the application. Backend, frontend, infrastructure, the AgentCore project, docs and the Kiro specs. The commands below run from this folder unless noted.
+- `amplify.yml`: the AWS Amplify Hosting build spec (monorepo app root `heatwise-ai/frontend`).
+- `README.md`, `LICENSE`: this file and the MIT license.
+
+Screenshots: TODO (Home, Plan tab with checklist, Agent activity, Impact). Demo video: TODO (public link, under 3 minutes; script in [heatwise-ai/docs/demo-script.md](heatwise-ai/docs/demo-script.md)).
 
 ## Documentation
 
-- [docs/agent-workflow.md](docs/agent-workflow.md): the five agents, hooks, steering, revision, fallback, sessions, and the evaluation loop.
-- [docs/architecture.md](docs/architecture.md): local and AWS mode, data classification, DynamoDB keys, IAM, deployment status.
-- [docs/evaluation.md](docs/evaluation.md): methodology and measured results on synthetic scenarios (generated).
-- [docs/deployment.md](docs/deployment.md): build, deploy, smoke test, cost, destroy, deployment log.
-- [docs/builder-center-article.md](docs/builder-center-article.md), [docs/demo-script.md](docs/demo-script.md), [docs/submission-checklist.md](docs/submission-checklist.md): hackathon submission material.
+- [heatwise-ai/docs/agent-workflow.md](heatwise-ai/docs/agent-workflow.md): the five agents, hooks, steering, revision, fallback, sessions, and the evaluation loop.
+- [heatwise-ai/docs/architecture.md](heatwise-ai/docs/architecture.md): local and AWS mode, data classification, DynamoDB keys, IAM, deployment status.
+- [heatwise-ai/docs/evaluation.md](heatwise-ai/docs/evaluation.md): methodology and measured results on synthetic scenarios (generated).
+- [heatwise-ai/docs/deployment.md](heatwise-ai/docs/deployment.md): build, deploy, smoke test, cost, destroy, deployment log.
+- [heatwise-ai/docs/builder-center-article.md](heatwise-ai/docs/builder-center-article.md), [heatwise-ai/docs/demo-script.md](heatwise-ai/docs/demo-script.md), [heatwise-ai/docs/submission-checklist.md](heatwise-ai/docs/submission-checklist.md): hackathon submission material.
 
-Development specs (requirements, design, task list), written with Kiro's spec-driven workflow, are in [`.kiro/specs/heatwise-ai/`](.kiro/specs/heatwise-ai/).
+Development specs (requirements, design, task list), written with Kiro's spec-driven workflow, are in [`.kiro/specs/heatwise-ai/`](heatwise-ai/.kiro/specs/heatwise-ai/).
 
 ## How it works
 
@@ -80,16 +108,17 @@ From the command line instead of the dashboard:
 .venv\Scripts\python.exe -m backend.evaluation report
 ```
 
-Offline mode needs no network or AWS and also runs inside `pytest`. Live mode calls Amazon Bedrock, refuses to start without `--confirm-live` and is capped at 6 scenarios. Both write `backend/evaluation/results/evaluation-results.json` (one section per mode); `report` regenerates [docs/evaluation.md](docs/evaluation.md). Results are on synthetic test scenarios only. Install the judge dependency with the `dev` or `eval` extra (`strands-agents-evals==1.8.0`).
+Offline mode needs no network or AWS and also runs inside `pytest`. Live mode calls Amazon Bedrock, refuses to start without `--confirm-live` and is capped at 6 scenarios. Both write `backend/evaluation/results/evaluation-results.json` (one section per mode); `report` regenerates [heatwise-ai/docs/evaluation.md](heatwise-ai/docs/evaluation.md). Results are on synthetic test scenarios only. Install the judge dependency with the `dev` or `eval` extra (`strands-agents-evals==1.8.0`).
 
 ## Tests
 
-Counts from the Milestone 5 runs on 2026-11-03:
+Counts from the runs on 2026-11-03, after the AgentCore switch:
 
 ```powershell
-.venv\Scripts\python.exe -m pytest                     # 330 passed, 4 deselected (live tests are opt-in: -m live)
-cd frontend; npm run typecheck; npm run lint; npm test; npm run build   # 8 test files, 56 tests
-infrastructure\.venv\Scripts\python.exe -m pytest infrastructure\tests -q   # 15 passed (venv setup in docs/deployment.md)
+cd heatwise-ai
+.venv\Scripts\python.exe -m pytest                     # 338 passed, 4 deselected (live tests are opt-in: -m live)
+cd frontend; npm run typecheck; npm run lint; npm test; npm run build; cd ..   # 8 test files, 56 tests
+infrastructure\.venv\Scripts\python.exe -m pytest infrastructure\tests -q   # 16 passed (venv setup in heatwise-ai/docs/deployment.md)
 ```
 
 No automated test calls Bedrock, AWS or the network (scripted models, fake and demo providers, moto).
@@ -124,7 +153,7 @@ Python CDK in `infrastructure/` adds the dashboard's job API:
 - `HeatWiseApi`: an API Lambda, an HTTP API, and a worker Lambda that calls `invoke_agent_runtime` and stores the report. Deploy it with `-c heatwise:agentcore_runtime_arn=<arn>`. Without that, the worker runs the agents itself.
 - `HeatWiseFrontend` (optional): S3 + CloudFront.
 
-Exact commands, cost notes and teardown order are in [docs/deployment.md](docs/deployment.md), "Deployment log".
+Exact commands, cost notes and teardown order are in [heatwise-ai/docs/deployment.md](heatwise-ai/docs/deployment.md), "Deployment log".
 
 ## Sources
 
@@ -144,9 +173,10 @@ Risk thresholds and guidance cite only these pages, each fetched and read on 202
 
 Not cited because they could not be read: osha.gov heat pages and cdc.gov/niosh (HTTP 403), 112.gov.in (timeout), ndma.gov.in heat-wave pages (404/PDF). No emergency number could be verified, so escalation text says to contact local emergency services or the nearest health facility.
 
-## Layout
+## Layout (inside `heatwise-ai/`)
 
 ```
+.kiro/specs/heatwise-ai/   requirements.md, design.md, tasks.md (Kiro spec-driven workflow)
 backend/
   agents/      coordinator.py, weather_agent.py, risk_agent.py, planner_agent.py, safety_agent.py, hooks.py,
                model_factory.py, scripted.py (ScriptedModel), offline.py (AGENT_MODE=offline coordinator)
@@ -165,8 +195,8 @@ backend/
 HeatWiseAC/    AgentCore CLI project (agentcore.json); app/ is staged by infrastructure/scripts/stage_agentcore_app.py
 frontend/src/  api/, lib/, components/, routes/ (Landing, AssessForm, JobProgress, History, Impact, report/*), test/
 infrastructure/ app.py, cdk.json, stacks/, scripts/build_lambda_asset.py, tests/, requirements*.txt, lambda-requirements.txt
-docs/          agent-workflow.md, architecture.md, evaluation.md, deployment.md, builder-center-article.md,
-               demo-script.md, submission-checklist.md
+docs/          architecture.drawio, agent-workflow.md, architecture.md, evaluation.md, deployment.md,
+               builder-center-article.md, demo-script.md, submission-checklist.md
 ```
 
 Runtime data (`.data/`), build output (`infrastructure/build/`, `cdk.out/`, `frontend/dist/`) and virtual environments are git-ignored.

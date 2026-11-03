@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { ChartNoAxesColumn, ClipboardPlus, History, House } from "lucide-react";
 import { type RefObject, useEffect, useRef } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
@@ -34,6 +35,12 @@ function reportOf(pathname: string): string | null {
   return /^\/reports\/([^/]+)/.exec(pathname)?.[1] ?? null;
 }
 
+/** Report tabs share one key, so switching tabs does not replay the page entrance. */
+function pageKey(pathname: string): string {
+  const report = reportOf(pathname);
+  return report ? `report:${report}` : pathname;
+}
+
 /**
  * Gives each screen its own document title and, after a client-side navigation, moves focus to main
  * so screen-reader users hear the page change. Switching tabs inside one report keeps focus on the tab nav.
@@ -52,58 +59,96 @@ function useRouteAnnouncement(main: RefObject<HTMLElement | null>) {
   }, [pathname, main]);
 }
 
-/*
- * Open-plane shell (taste-skill sheet, shell redrawn once): a labelled 240px sidebar on the page ground,
- * no top bar; the canvas is a centred 1088px column (report pattern). Below 1024px the sidebar folds into
- * a top bar: mark and badges on one row, the four links on the next.
+/**
+ * Shell: an atmospheric fixed background, a 248px sidebar on large screens, and on smaller screens a top bar
+ * with a fixed bottom tab bar. The single "Main" navigation element is restyled per breakpoint.
  */
 export function AppShell() {
   const main = useRef<HTMLElement>(null);
+  const { pathname } = useLocation();
   useRouteAnnouncement(main);
+
   return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-[240px_minmax(0,1fr)]">
+    <div className="relative min-h-dvh lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
+      <div aria-hidden="true" className="hw-atmosphere" />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-control focus:bg-surface focus:px-3 focus:py-2"
       >
         Skip to main content
       </a>
-      <header className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 sm:px-6 lg:sticky lg:top-0 lg:h-dvh lg:flex-col lg:flex-nowrap lg:items-stretch lg:px-3 lg:py-6">
-        <Link to="/" className="order-1 flex items-center gap-2 rounded-control px-2 py-1">
-          <Mark />
-          <span className="text-section font-medium">HeatWise AI</span>
+
+      <header className="relative z-20 flex items-center gap-3 border-b border-line bg-ground/95 px-4 py-3 sm:px-6 lg:sticky lg:top-0 lg:h-dvh lg:flex-col lg:items-stretch lg:border-b-0 lg:border-r lg:bg-surface/40 lg:px-4 lg:py-6">
+        <Link to="/" className="flex items-center gap-2.5 rounded-control px-2 py-1">
+          <span className="grid h-9 w-9 place-items-center rounded-control bg-raised ring-1 ring-line">
+            <Mark size={22} />
+          </span>
+          <span>
+            <span className="block text-section font-semibold leading-5">HeatWise AI</span>
+            <span className="block text-small text-muted">Heat-risk intelligence</span>
+          </span>
         </Link>
-        <div className="order-2 ml-auto lg:order-3 lg:ml-0 lg:mt-auto lg:px-2">
-          <Badges />
-        </div>
-        <nav aria-label="Main" className="order-3 w-full lg:order-2 lg:mt-4">
-          <ul className="flex gap-1 lg:flex-col">
+
+        <nav
+          aria-label="Main"
+          className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 lg:static lg:mt-8 lg:border-0 lg:bg-transparent lg:p-0"
+        >
+          <ul className="grid grid-cols-4 gap-1 lg:flex lg:flex-col">
             {NAV.map(({ to, label, icon: Icon, end }) => (
               <li key={to}>
                 <NavLink
                   to={to}
                   end={end}
                   className={({ isActive }) =>
-                    `flex h-9 items-center gap-2 whitespace-nowrap rounded-control px-2 text-body lg:h-8 ${
-                      isActive ? "bg-active text-ink" : "text-muted hover:text-ink"
+                    `relative flex flex-col items-center gap-1 rounded-control px-2 py-1.5 text-small font-medium transition-colors lg:h-10 lg:flex-row lg:gap-3 lg:px-3 lg:text-body ${
+                      isActive ? "text-ink" : "text-muted hover:text-ink"
                     }`
                   }
                 >
-                  <Icon size={16} strokeWidth={1.5} aria-hidden="true" className="hidden sm:block" />
-                  {label}
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <motion.span
+                          layoutId="nav-active"
+                          aria-hidden="true"
+                          className="absolute inset-0 rounded-control bg-active ring-1 ring-line"
+                          transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                        />
+                      )}
+                      <Icon
+                        size={18}
+                        strokeWidth={1.75}
+                        aria-hidden="true"
+                        className={`relative ${isActive ? "text-amber" : ""}`}
+                      />
+                      <span className="relative whitespace-nowrap">{label}</span>
+                    </>
+                  )}
                 </NavLink>
               </li>
             ))}
           </ul>
         </nav>
+
+        <div className="ml-auto lg:ml-0 lg:mt-auto lg:px-2">
+          <p className="mb-2 hidden text-small text-muted lg:block">Data and agents</p>
+          <Badges />
+        </div>
       </header>
-      <div className="flex min-w-0 flex-col">
+
+      <div className="relative z-10 flex min-w-0 flex-col pb-24 lg:pb-0">
         <main ref={main} id="main" tabIndex={-1} className="flex-1 focus:outline-none">
-          <div className="mx-auto w-full max-w-[1088px] px-4 py-6 sm:px-6 lg:px-8 lg:py-9">
+          <motion.div
+            key={pageKey(pathname)}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="mx-auto w-full max-w-[1320px] px-4 py-6 sm:px-6 lg:px-10 lg:py-9"
+          >
             <Outlet />
-          </div>
+          </motion.div>
         </main>
-        <footer className="mx-auto w-full max-w-[1088px] px-4 pb-8 text-small text-muted sm:px-6 lg:px-8">
+        <footer className="mx-auto w-full max-w-[1320px] px-4 pb-8 text-small text-muted sm:px-6 lg:px-10">
           HeatWise AI is an informational tool. It is not medical advice, not an emergency service and not a
           substitute for official warnings.
         </footer>

@@ -4,7 +4,7 @@ import { DASH, formatDateTime, formatDay, formatPct, formatTemp } from "../../li
 import { IMD_HEAT_WAVE_C, IMD_PLAINS_C, IMD_SEVERE_C, imdApplies, imdLevel, imdNotAppliedText } from "../../lib/imd";
 import { useReportRecord } from "./reportContext";
 
-const CARD = "rounded-card border border-line bg-surface p-5";
+const CARD = "glass rounded-card p-5 sm:p-6";
 
 /**
  * Screen C: how hot will it get here over the forecast days, against the IMD thresholds?
@@ -80,7 +80,7 @@ export function ClimateView() {
               {forecast.days.map((d) => {
                 const level = imd ? imdLevel(d.temperature_max_c, terrain) : "IMD rule not applied";
                 return (
-                  <li key={d.date} className="rounded-control bg-ground p-3">
+                  <li key={d.date} className="rounded-control border border-line bg-raised/40 p-3">
                     <p className="text-small text-muted">{formatDay(d.date)}</p>
                     <p className="num mt-0.5 text-section font-medium">{formatTemp(d.temperature_max_c)}</p>
                     <div aria-hidden="true" className="relative mt-2 h-1.5 rounded-full bg-raised">

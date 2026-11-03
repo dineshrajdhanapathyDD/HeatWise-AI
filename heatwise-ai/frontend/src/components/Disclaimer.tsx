@@ -5,7 +5,7 @@ export const DISCLAIMER =
 /** Shown on every report tab together with the report's own notices. */
 export function Disclaimer({ notices }: { notices: string[] }) {
   return (
-    <section aria-labelledby="about-report" className="rounded-card bg-raised p-5">
+    <section aria-labelledby="about-report" className="rounded-card border border-line bg-raised/50 p-5">
       <h2 id="about-report" className="text-body font-medium">
         About this report
       </h2>

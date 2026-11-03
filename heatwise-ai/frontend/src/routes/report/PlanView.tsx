@@ -7,7 +7,7 @@ import { renderablePlanItems } from "../../lib/safety";
 import { sourceFor } from "../../lib/sources";
 import { useReportRecord } from "./reportContext";
 
-const CARD = "rounded-card border border-line bg-surface p-5";
+const CARD = "glass rounded-card p-5 sm:p-6";
 const AUDIENCES = [
   { key: "household", title: "Households" },
   { key: "outdoor_worker", title: "Outdoor workers" },

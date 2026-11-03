@@ -2,6 +2,8 @@
 
 HeatWise AI runs the same backend code in two modes. Local mode is the M3 setup with file storage. AWS mode is defined in `infrastructure/` (Python CDK). Configuration (`backend/config.py`) picks the storage and job back ends; the API contract the dashboard uses is the same in both modes. The agent workflow itself is described in [agent-workflow.md](agent-workflow.md), and the evaluation suite in [evaluation.md](evaluation.md).
 
+Diagram: [architecture.drawio](architecture.drawio). Open it in app.diagrams.net or a Draw.io editor extension.
+
 **The agents run on Amazon Bedrock AgentCore Runtime.** The coordinator and its four specialists are deployed as the AgentCore runtime `HeatWiseAC_heatwise_agent` (`HeatWiseAC/`, `backend/agentcore_entry.py`). The HTTP API and a thin worker Lambda handle jobs, storage and the dashboard contract. The worker calls `invoke_agent_runtime` and runs no agents itself (`AGENT_MODE=agentcore`, `backend/agents/agentcore_client.py`).
 
 Deployment status, us-east-1, 2026-11-03 (from the deploy outputs and the live checks in [deployment.md](deployment.md), "Deployment log"):

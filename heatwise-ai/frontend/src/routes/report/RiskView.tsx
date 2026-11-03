@@ -5,7 +5,7 @@ import { indicatorLabel, riskLabel } from "../../lib/risk";
 import { sourceFor } from "../../lib/sources";
 import { useReportRecord } from "./reportContext";
 
-const CARD = "rounded-card border border-line bg-surface p-5";
+const CARD = "glass rounded-card p-5 sm:p-6";
 const CONFIDENCE = { high: "High", medium: "Medium", low: "Low" } as const;
 
 /** Screen D: how serious is the heat risk for this community, and why? */

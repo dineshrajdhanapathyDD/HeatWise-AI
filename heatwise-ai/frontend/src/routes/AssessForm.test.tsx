@@ -5,6 +5,8 @@ import { describe, expect, it } from "vitest";
 import type { AssessmentRequest } from "../api/types";
 import { LIVE_HEALTH, mockApi, renderApp } from "../test/helpers";
 
+type User = ReturnType<typeof userEvent.setup>;
+
 function jobFor(body: AssessmentRequest) {
   return {
     job_id: "job-1",
@@ -33,21 +35,35 @@ function captureSubmit() {
   return sent;
 }
 
+async function next(user: User, heading: string) {
+  await user.click(screen.getByRole("button", { name: "Next" }));
+  expect(await screen.findByRole("heading", { level: 2, name: heading })).toBeInTheDocument();
+}
+
 describe("AssessForm", () => {
-  it("maps the form onto the request body and opens the job", async () => {
+  it("walks the three steps and maps the form onto the request body", async () => {
     const sent = captureSubmit();
     const user = userEvent.setup();
     renderApp("/assess");
 
+    expect(screen.getByRole("list", { name: "Assessment steps" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "Place" })).toBeInTheDocument();
     await user.type(screen.getByLabelText("City, town or village"), "Wardha");
     await user.type(screen.getByLabelText("District (optional)"), "Wardha");
     await user.type(screen.getByLabelText("State (optional)"), "Maharashtra");
+    await next(user, "Community");
+
     await user.click(screen.getByLabelText("Older people"));
     await user.click(screen.getByLabelText("Farming households"));
     await user.click(within(screen.getByRole("group", { name: "Drinking water access" })).getByRole("radio", { name: "Limited" }));
     await user.click(screen.getByRole("radio", { name: "Plains" }));
+    await next(user, "Settings and review");
+
     await user.selectOptions(screen.getByLabelText("Forecast days"), "5");
     await user.selectOptions(screen.getByLabelText("Preferred language"), "hi");
+    const review = screen.getByRole("region", { name: "Review" });
+    expect(within(review).getByText("Wardha, Wardha, Maharashtra")).toBeInTheDocument();
+    expect(within(review).getByText("Older people, Farming households")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Run the assessment" }));
 
     expect(await screen.findByRole("heading", { name: "Assessment in progress" })).toBeInTheDocument();
@@ -69,11 +85,29 @@ describe("AssessForm", () => {
         },
       },
     ]);
+    expect(await screen.findByText("Assessment started for Wardha.")).toBeInTheDocument();
+  }, 20_000);
+
+  it("keeps answers when going back a step", async () => {
+    mockApi({});
+    const user = userEvent.setup();
+    renderApp("/assess");
+    await user.type(screen.getByLabelText("City, town or village"), "Nagpur");
+    await next(user, "Community");
+    await user.click(screen.getByLabelText("Young children"));
+    await user.click(screen.getByRole("button", { name: "Back" }));
+    expect(screen.getByLabelText("City, town or village")).toHaveValue("Nagpur");
+    await next(user, "Community");
+    expect(screen.getByLabelText("Young children")).toBeChecked();
   });
 
-  it("ties the English-only note to the language select", () => {
+  it("ties the English-only note to the language select", async () => {
     mockApi({});
+    const user = userEvent.setup();
     renderApp("/assess");
+    await user.type(screen.getByLabelText("City, town or village"), "Wardha");
+    await next(user, "Community");
+    await next(user, "Settings and review");
     expect(screen.getByLabelText("Preferred language")).toHaveAccessibleDescription("Plans are English only for now.");
   });
 
@@ -82,6 +116,8 @@ describe("AssessForm", () => {
     const user = userEvent.setup();
     renderApp("/assess");
     await user.type(screen.getByLabelText("City, town or village"), "  Nagpur ");
+    await next(user, "Community");
+    await next(user, "Settings and review");
     await user.click(screen.getByRole("button", { name: "Run the assessment" }));
     await screen.findByRole("heading", { name: "Assessment in progress" });
     expect(sent[0]?.place).toEqual({ name: "Nagpur", district: null, state: null });
@@ -89,19 +125,20 @@ describe("AssessForm", () => {
     expect(Object.keys(sent[0] ?? {}).sort()).toEqual(["forecast_days", "place", "profile"]);
   });
 
-  it("blocks an empty place name on the client and focuses it", async () => {
+  it("blocks an empty place name on the first step and focuses it", async () => {
     const sent = captureSubmit();
     const user = userEvent.setup();
     renderApp("/assess");
-    await user.click(screen.getByRole("button", { name: "Run the assessment" }));
+    await user.click(screen.getByRole("button", { name: "Next" }));
     const name = screen.getByLabelText("City, town or village");
     expect(name).toHaveAttribute("aria-invalid", "true");
     expect(name).toHaveAccessibleDescription("Enter the city, town or village.");
     await waitFor(() => expect(name).toHaveFocus());
+    expect(screen.getByRole("heading", { level: 2, name: "Place" })).toBeInTheDocument();
     expect(sent).toHaveLength(0);
   });
 
-  it("shows server field errors inline and focuses the first invalid field", async () => {
+  it("returns to the step with the first server field error and focuses it", async () => {
     mockApi({
       "POST /api/assessments": {
         status: 422,
@@ -121,16 +158,22 @@ describe("AssessForm", () => {
     renderApp("/assess");
     await user.type(screen.getByLabelText("City, town or village"), "Wardha");
     await user.type(screen.getByLabelText("State (optional)"), "Maha");
+    await next(user, "Community");
+    await next(user, "Settings and review");
     await user.click(screen.getByRole("button", { name: "Run the assessment" }));
 
+    expect(await screen.findByRole("heading", { level: 2, name: "Place" })).toBeInTheDocument();
     const state = screen.getByLabelText("State (optional)");
     await waitFor(() => expect(state).toHaveFocus());
     expect(state).toHaveAttribute("aria-invalid", "true");
     expect(state).toHaveAccessibleDescription("Location contains characters that are not allowed.");
+
+    await next(user, "Community");
+    await next(user, "Settings and review");
     expect(screen.getByLabelText("Forecast days")).toHaveAccessibleDescription(
       "From 1 to 7 days. Forecast days must be between 1 and 7.",
     );
-  });
+  }, 20_000);
 
   it("can be filled in and submitted with the keyboard alone", async () => {
     const sent = captureSubmit();
@@ -140,12 +183,20 @@ describe("AssessForm", () => {
 
     for (let i = 0; i < 20 && document.activeElement !== name; i++) await user.tab();
     expect(name).toHaveFocus();
-    await user.keyboard("Wardha");
-    await user.tab(); // district
-    await user.tab(); // state
-    await user.tab(); // first population group
-    expect(screen.getByLabelText("Older people")).toHaveFocus();
+    await user.keyboard("Wardha{Enter}");
+    const community = await screen.findByRole("heading", { level: 2, name: "Community" });
+    await waitFor(() => expect(community).toHaveFocus());
+
+    const older = screen.getByLabelText("Older people");
+    for (let i = 0; i < 10 && document.activeElement !== older; i++) await user.tab();
+    expect(older).toHaveFocus();
     await user.keyboard(" ");
+    const nextButton = screen.getByRole("button", { name: "Next" });
+    for (let i = 0; i < 30 && document.activeElement !== nextButton; i++) await user.tab();
+    expect(nextButton).toHaveFocus();
+    await user.keyboard("{Enter}");
+
+    await screen.findByRole("heading", { level: 2, name: "Settings and review" });
     const submit = screen.getByRole("button", { name: "Run the assessment" });
     for (let i = 0; i < 30 && document.activeElement !== submit; i++) await user.tab();
     expect(submit).toHaveFocus();
@@ -154,7 +205,7 @@ describe("AssessForm", () => {
     await screen.findByRole("heading", { name: "Assessment in progress" });
     expect(sent[0]?.place.name).toBe("Wardha");
     expect(sent[0]?.profile.elderly).toBe(true);
-  });
+  }, 20_000);
 
   it("replaces the place fields with the demo locations in demo mode", async () => {
     const sent: AssessmentRequest[] = [];
@@ -175,6 +226,8 @@ describe("AssessForm", () => {
     expect(screen.getByText("Demo data")).toBeInTheDocument();
     expect(screen.getByText("Scripted agents")).toBeInTheDocument();
     await user.selectOptions(select, "demo-mild");
+    await next(user, "Community");
+    await next(user, "Settings and review");
     await user.click(screen.getByRole("button", { name: "Run the assessment" }));
     await waitFor(() => expect(sent).toHaveLength(1));
     expect(sent[0]?.place).toEqual({ name: "demo-mild" });

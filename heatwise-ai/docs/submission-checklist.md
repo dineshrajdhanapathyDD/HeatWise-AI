@@ -19,7 +19,7 @@ Requirements are paraphrased from the hackathon page, fetched on 2026-11-03 duri
 
 ## Open source license
 
-The hackathon page fetched above does not state a license requirement. The repository is licensed MIT (an OSI-approved license) in [LICENSE](../LICENSE), and the README says so. If the official Rules ask for something else, update this item (TODO, Rules not fetched).
+The hackathon page fetched above does not state a license requirement. The repository is licensed MIT (an OSI-approved license) in [LICENSE](../../LICENSE), and the README says so. If the official Rules ask for something else, update this item (TODO, Rules not fetched).
 
 ## Pre-publish hygiene (checked 2026-11-03)
 
