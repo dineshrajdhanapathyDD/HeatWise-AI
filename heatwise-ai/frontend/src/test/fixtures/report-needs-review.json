@@ -1,0 +1,1437 @@
+{
+  "report_id": "5376c96146e24f2faf2f6a38f69a80cf",
+  "created_at": "2026-11-02T16:55:18.126386Z",
+  "status": "needs_human_review",
+  "query": "Wardha",
+  "location": {
+    "query": "Wardha",
+    "name": "Wardha",
+    "admin1": "Maharashtra",
+    "admin2": null,
+    "country": "India",
+    "country_code": "IN",
+    "latitude": 20.74,
+    "longitude": 78.6,
+    "timezone": "Asia/Kolkata"
+  },
+  "data_retrieved_at": "2026-05-10T09:00:00Z",
+  "weather_source": {
+    "provider": "FakeProvider",
+    "source_urls": [
+      "https://fake.example/api"
+    ],
+    "data_mode": "live"
+  },
+  "weather_summary": "Very hot and dry in Wardha.",
+  "risk_category": "extreme",
+  "risk": {
+    "status": "ok",
+    "category": "extreme",
+    "hazard_score": 3,
+    "heat_index_c": 46.4,
+    "heat_index_f": 115.6,
+    "heat_index_band": "Danger",
+    "imd_indication": "heat_wave",
+    "contributing_factors": [
+      {
+        "code": "heat_index",
+        "description": "Current NWS heat index from 44.2°C and 21% relative humidity (band: Danger).",
+        "value": 46.4,
+        "unit": "°C",
+        "source_id": "nws_heat_index"
+      },
+      {
+        "code": "apparent_temperature",
+        "description": "Provider apparent temperature, shown as evidence only (a different metric from the NWS heat index; not used in the bands).",
+        "value": 46.0,
+        "unit": "°C",
+        "source_id": null
+      },
+      {
+        "code": "forecast_max_temperature",
+        "description": "Highest forecast daily maximum compared with IMD actual-maximum criteria (indication: heat_wave). Not an official declaration.",
+        "value": 46.0,
+        "unit": "°C",
+        "source_id": "who_india_heat_waves"
+      },
+      {
+        "code": "vulnerability_heuristic",
+        "description": "Project heuristic (not an official standard): 3 community vulnerability indicator(s) present (threshold 2); category raised one step.",
+        "value": 3.0,
+        "unit": "indicators",
+        "source_id": "who_heat_health_factsheet"
+      }
+    ],
+    "vulnerability_indicators": [
+      "elderly",
+      "outdoor_workers",
+      "farmers"
+    ],
+    "heuristic_adjustment_applied": true,
+    "confidence": "high",
+    "missing_data": [
+      "Departure-from-normal criteria not evaluated: climatological normals unavailable.",
+      "IMD declares a heat wave only when criteria are met at two or more stations for two consecutive days; this is a single forecast point."
+    ],
+    "explanation": "Community heat risk is extreme. The forecast reaches 46°C, above the 45°C IMD heat-wave criterion; this is an indication, not an official declaration.",
+    "explanation_source": "model",
+    "explanation_issues": [],
+    "rules_version": "m2-risk-rules-1",
+    "source_ids": [
+      "nws_heat_index",
+      "wpc_heat_index_equation",
+      "who_india_heat_waves",
+      "who_heat_health_factsheet"
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "current_temperature",
+      "description": "Current air temperature",
+      "value": 44.2,
+      "unit": "°C",
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z"
+    },
+    {
+      "kind": "current_apparent_temperature",
+      "description": "Current apparent temperature (provider metric)",
+      "value": 46.0,
+      "unit": "°C",
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z"
+    },
+    {
+      "kind": "current_relative_humidity",
+      "description": "Current relative humidity",
+      "value": 21.0,
+      "unit": "%",
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z"
+    },
+    {
+      "kind": "forecast_max_temperature",
+      "description": "Forecast maximum temperature on 2026-05-10",
+      "value": 44.0,
+      "unit": "°C",
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z"
+    },
+    {
+      "kind": "forecast_max_temperature",
+      "description": "Forecast maximum temperature on 2026-05-11",
+      "value": 45.0,
+      "unit": "°C",
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z"
+    },
+    {
+      "kind": "forecast_max_temperature",
+      "description": "Forecast maximum temperature on 2026-05-12",
+      "value": 46.0,
+      "unit": "°C",
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z"
+    },
+    {
+      "kind": "official_alerts",
+      "description": "Fake has no alerts.",
+      "value": "not available",
+      "unit": null,
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z"
+    },
+    {
+      "kind": "heat_index",
+      "description": "NWS heat index (Danger)",
+      "value": 46.4,
+      "unit": "°C",
+      "source_url": "https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml",
+      "retrieved_at": null
+    },
+    {
+      "kind": "apparent_temperature",
+      "description": "Provider apparent temperature, shown as evidence only (a different metric from the NWS heat index; not used in the bands).",
+      "value": 46.0,
+      "unit": "°C",
+      "source_url": null,
+      "retrieved_at": null
+    },
+    {
+      "kind": "forecast_max_temperature",
+      "description": "Highest forecast daily maximum compared with IMD actual-maximum criteria (indication: heat_wave). Not an official declaration.",
+      "value": 46.0,
+      "unit": "°C",
+      "source_url": "https://www.who.int/india/heat-waves",
+      "retrieved_at": null
+    },
+    {
+      "kind": "vulnerability_heuristic",
+      "description": "Project heuristic (not an official standard): 3 community vulnerability indicator(s) present (threshold 2); category raised one step.",
+      "value": 3.0,
+      "unit": "indicators",
+      "source_url": "https://www.who.int/news-room/fact-sheets/detail/climate-change-heat-and-health",
+      "retrieved_at": null
+    }
+  ],
+  "recommended_actions": {
+    "status": "ok",
+    "language": "en",
+    "requested_language": "en",
+    "language_notice": null,
+    "risk_category": "extreme",
+    "intro": "This plan helps the community prepare for the heat.",
+    "intro_source": "model",
+    "items": [
+      {
+        "id": "hh-before-cooling-1",
+        "audience": "household",
+        "phase": "before",
+        "topic": "cooling",
+        "text": "Keep the home cooler by covering windows with curtains or shades, and find nearby cool public places you can go to during the hottest days.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-before-hydration-1",
+        "audience": "household",
+        "phase": "before",
+        "topic": "hydration",
+        "text": "Keep drinking water within easy reach of everyone at home so people can drink regularly on hot days.",
+        "source_ids": [
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-before-check_others-1",
+        "audience": "household",
+        "phase": "before",
+        "topic": "check_others",
+        "text": "Note the older people, young children, pregnant women and people with chronic illness nearby whom you will check on during hot days.",
+        "source_ids": [
+          "nws_heat_safety",
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-before-escalation-1",
+        "audience": "household",
+        "phase": "before",
+        "topic": "escalation",
+        "text": "Learn the signs of heat illness, such as heavy sweating, dizziness, confusion, fainting or hot dry skin, and know how to contact local emergency services or the nearest health facility.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-before-stay_informed-1",
+        "audience": "household",
+        "phase": "before",
+        "topic": "stay_informed",
+        "text": "Follow weather forecasts and any official heat warnings issued by local authorities.",
+        "source_ids": [
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "general-1",
+        "audience": "household",
+        "phase": "during",
+        "topic": "general",
+        "text": "Take aspirin if you feel hot.",
+        "source_ids": [],
+        "kind": "general_educational",
+        "added_by": "agent"
+      },
+      {
+        "id": "hh-during-hydration-1",
+        "audience": "household",
+        "phase": "during",
+        "topic": "hydration",
+        "text": "Drink water regularly through the day.",
+        "source_ids": [
+          "who_heat_health_factsheet",
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-during-rest-1",
+        "audience": "household",
+        "phase": "during",
+        "topic": "rest",
+        "text": "Avoid heavy activity during the hottest part of the day and rest in the coolest place available.",
+        "source_ids": [
+          "ready_gov_extreme_heat",
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-during-shade-1",
+        "audience": "household",
+        "phase": "during",
+        "topic": "shade",
+        "text": "If you need to go outside, stay in the shade and wear a wide hat and loose, light-coloured clothing.",
+        "source_ids": [
+          "ready_gov_extreme_heat",
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-during-cooling-1",
+        "audience": "household",
+        "phase": "during",
+        "topic": "cooling",
+        "text": "Take cool showers or baths and cook less with the oven; do not rely on a fan as your main way to cool down.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-during-check_others-1",
+        "audience": "household",
+        "phase": "during",
+        "topic": "check_others",
+        "text": "Check regularly on older family members, neighbours and young children, and never leave children or pets in a parked vehicle.",
+        "source_ids": [
+          "ready_gov_extreme_heat",
+          "nws_heat_safety",
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-during-escalation-1",
+        "audience": "household",
+        "phase": "during",
+        "topic": "escalation",
+        "text": "If someone is confused, faints or has very hot, dry skin, contact local emergency services or the nearest health facility immediately, move them to a cool shaded place and cool them with wet cloths.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-after-hydration-1",
+        "audience": "household",
+        "phase": "after",
+        "topic": "hydration",
+        "text": "Keep drinking water regularly while it stays hot, and refill stored drinking water for the next hot spell.",
+        "source_ids": [
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-after-rest-1",
+        "audience": "household",
+        "phase": "after",
+        "topic": "rest",
+        "text": "Rest and recover in a cool place; if cramps or tiredness from the heat appear, move somewhere cooler, remove extra clothing and sip water.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-after-escalation-1",
+        "audience": "household",
+        "phase": "after",
+        "topic": "escalation",
+        "text": "If heat cramps or exhaustion get worse or last more than an hour, contact a health provider or the nearest health facility.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "hh-after-check_others-1",
+        "audience": "household",
+        "phase": "after",
+        "topic": "check_others",
+        "text": "Keep checking on vulnerable neighbours and relatives until the heat has passed.",
+        "source_ids": [
+          "nws_heat_safety",
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-before-work_schedule-1",
+        "audience": "outdoor_worker",
+        "phase": "before",
+        "topic": "work_schedule",
+        "text": "Plan heavy outdoor work around the forecast, moving it away from the midday heat where possible.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood",
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-before-shade-1",
+        "audience": "outdoor_worker",
+        "phase": "before",
+        "topic": "shade",
+        "text": "Arrange shaded rest areas close to the work site before hot days.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-before-hydration-1",
+        "audience": "outdoor_worker",
+        "phase": "before",
+        "topic": "hydration",
+        "text": "Make sure enough drinking water is available at the work site.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-before-escalation-1",
+        "audience": "outdoor_worker",
+        "phase": "before",
+        "topic": "escalation",
+        "text": "Learn the early signs of heat stress and agree in advance how the team will contact local emergency services or the nearest health facility from the work site.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood",
+          "who_workplace_heat_stress"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-during-hydration-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "topic": "hydration",
+        "text": "Drink water regularly throughout the work shift.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood",
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-during-rest-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "topic": "rest",
+        "text": "Take regular rest breaks in the shade or another cool place.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-during-shade-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "topic": "shade",
+        "text": "Work in the shade where possible and wear a wide hat and loose, light-coloured clothing.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-during-work_schedule-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "topic": "work_schedule",
+        "text": "Avoid high-energy tasks during midday heat if possible.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-during-check_others-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "topic": "check_others",
+        "text": "Watch co-workers for signs of heat stress, especially older workers, pregnant workers and people with chronic health conditions.",
+        "source_ids": [
+          "who_workplace_heat_stress"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-during-escalation-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "topic": "escalation",
+        "text": "Heat exhaustion and heat stroke need an emergency response: if a worker is confused, faints or collapses, stop work, move them to shade, cool them and contact local emergency services or the nearest health facility.",
+        "source_ids": [
+          "who_workplace_heat_stress",
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-after-rest-1",
+        "audience": "outdoor_worker",
+        "phase": "after",
+        "topic": "rest",
+        "text": "After the shift, rest in a cool place, remove extra clothing and sip water to recover.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-after-escalation-1",
+        "audience": "outdoor_worker",
+        "phase": "after",
+        "topic": "escalation",
+        "text": "If cramps or exhaustion after work get worse or last more than an hour, contact a health provider or the nearest health facility.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "ow-after-stay_informed-1",
+        "audience": "outdoor_worker",
+        "phase": "after",
+        "topic": "stay_informed",
+        "text": "Check the forecast for the coming days and adjust work schedules to it.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-before-livestock_crops-1",
+        "audience": "farmer",
+        "phase": "before",
+        "topic": "livestock_crops",
+        "text": "Before hot spells, mulch to keep soil moist and plan shade for vegetable crops.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-before-hydration-1",
+        "audience": "farmer",
+        "phase": "before",
+        "topic": "hydration",
+        "text": "Store extra water for people, animals and crops before the heat arrives.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood",
+          "wsu_livestock_heat_wave"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-before-shade-1",
+        "audience": "farmer",
+        "phase": "before",
+        "topic": "shade",
+        "text": "Prepare shade for animals kept outside and make sure barns and sheds are well ventilated.",
+        "source_ids": [
+          "wsu_livestock_heat_wave",
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-before-stay_informed-1",
+        "audience": "farmer",
+        "phase": "before",
+        "topic": "stay_informed",
+        "text": "Follow local weather forecasts and crop advisories so you can plan ahead.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-before-escalation-1",
+        "audience": "farmer",
+        "phase": "before",
+        "topic": "escalation",
+        "text": "Know how to contact local emergency services or the nearest health facility, and keep the contact of a local veterinarian or extension worker for sick animals.",
+        "source_ids": [
+          "ready_gov_extreme_heat",
+          "wsu_livestock_heat_wave"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-during-hydration-1",
+        "audience": "farmer",
+        "phase": "during",
+        "topic": "hydration",
+        "text": "Give animals a continuous supply of cool, clean water, and drink water regularly yourself.",
+        "source_ids": [
+          "wsu_livestock_heat_wave",
+          "who_heat_health_factsheet"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-during-work_schedule-1",
+        "audience": "farmer",
+        "phase": "during",
+        "topic": "work_schedule",
+        "text": "Do field work and handle animals in the early morning or evening, and feed cattle in cooler hours.",
+        "source_ids": [
+          "wsu_livestock_heat_wave",
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-during-rest-1",
+        "audience": "farmer",
+        "phase": "during",
+        "topic": "rest",
+        "text": "Take rest and water breaks in the shade during field work.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-during-shade-1",
+        "audience": "farmer",
+        "phase": "during",
+        "topic": "shade",
+        "text": "Keep animals that are outside in the shade, and give priority to shade for poultry, which cannot sweat.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood",
+          "wsu_livestock_heat_wave"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-during-livestock_crops-1",
+        "audience": "farmer",
+        "phase": "during",
+        "topic": "livestock_crops",
+        "text": "Irrigate in the cooler hours of the day and keep harvested produce out of the sun.",
+        "source_ids": [
+          "fao_extreme_heat_agrifood"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-during-escalation-1",
+        "audience": "farmer",
+        "phase": "during",
+        "topic": "escalation",
+        "text": "If a person is confused, faints or has hot, dry skin, contact local emergency services or the nearest health facility; if animals look lethargic or have dry or sunken eyes, contact a local veterinarian.",
+        "source_ids": [
+          "ready_gov_extreme_heat",
+          "wsu_livestock_heat_wave"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-after-livestock_crops-1",
+        "audience": "farmer",
+        "phase": "after",
+        "topic": "livestock_crops",
+        "text": "After the heat, watch livestock for breathing and digestive problems.",
+        "source_ids": [
+          "wsu_livestock_heat_wave"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-after-hydration-1",
+        "audience": "farmer",
+        "phase": "after",
+        "topic": "hydration",
+        "text": "Keep animal water clean and fresh, since warm stagnant water can grow toxic blue-green algae.",
+        "source_ids": [
+          "wsu_livestock_heat_wave"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-after-rest-1",
+        "audience": "farmer",
+        "phase": "after",
+        "topic": "rest",
+        "text": "Rest in a cool place after field work and sip water to recover.",
+        "source_ids": [
+          "ready_gov_extreme_heat"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      },
+      {
+        "id": "fm-after-escalation-1",
+        "audience": "farmer",
+        "phase": "after",
+        "topic": "escalation",
+        "text": "Contact a local veterinarian or extension worker about animals that are still unwell after the heat.",
+        "source_ids": [
+          "wsu_livestock_heat_wave"
+        ],
+        "kind": "sourced",
+        "added_by": "rules"
+      }
+    ],
+    "checklist": [
+      {
+        "id": "hh-before-cooling-1",
+        "audience": "household",
+        "phase": "before",
+        "text": "Keep the home cooler by covering windows with curtains or shades, and find nearby cool public places you can go to during the hottest days.",
+        "done": false
+      },
+      {
+        "id": "hh-before-hydration-1",
+        "audience": "household",
+        "phase": "before",
+        "text": "Keep drinking water within easy reach of everyone at home so people can drink regularly on hot days.",
+        "done": false
+      },
+      {
+        "id": "hh-before-check_others-1",
+        "audience": "household",
+        "phase": "before",
+        "text": "Note the older people, young children, pregnant women and people with chronic illness nearby whom you will check on during hot days.",
+        "done": false
+      },
+      {
+        "id": "hh-before-escalation-1",
+        "audience": "household",
+        "phase": "before",
+        "text": "Learn the signs of heat illness, such as heavy sweating, dizziness, confusion, fainting or hot dry skin, and know how to contact local emergency services or the nearest health facility.",
+        "done": false
+      },
+      {
+        "id": "hh-before-stay_informed-1",
+        "audience": "household",
+        "phase": "before",
+        "text": "Follow weather forecasts and any official heat warnings issued by local authorities.",
+        "done": false
+      },
+      {
+        "id": "general-1",
+        "audience": "household",
+        "phase": "during",
+        "text": "Take aspirin if you feel hot.",
+        "done": false
+      },
+      {
+        "id": "hh-during-hydration-1",
+        "audience": "household",
+        "phase": "during",
+        "text": "Drink water regularly through the day.",
+        "done": false
+      },
+      {
+        "id": "hh-during-rest-1",
+        "audience": "household",
+        "phase": "during",
+        "text": "Avoid heavy activity during the hottest part of the day and rest in the coolest place available.",
+        "done": false
+      },
+      {
+        "id": "hh-during-shade-1",
+        "audience": "household",
+        "phase": "during",
+        "text": "If you need to go outside, stay in the shade and wear a wide hat and loose, light-coloured clothing.",
+        "done": false
+      },
+      {
+        "id": "hh-during-cooling-1",
+        "audience": "household",
+        "phase": "during",
+        "text": "Take cool showers or baths and cook less with the oven; do not rely on a fan as your main way to cool down.",
+        "done": false
+      },
+      {
+        "id": "hh-during-check_others-1",
+        "audience": "household",
+        "phase": "during",
+        "text": "Check regularly on older family members, neighbours and young children, and never leave children or pets in a parked vehicle.",
+        "done": false
+      },
+      {
+        "id": "hh-during-escalation-1",
+        "audience": "household",
+        "phase": "during",
+        "text": "If someone is confused, faints or has very hot, dry skin, contact local emergency services or the nearest health facility immediately, move them to a cool shaded place and cool them with wet cloths.",
+        "done": false
+      },
+      {
+        "id": "hh-after-hydration-1",
+        "audience": "household",
+        "phase": "after",
+        "text": "Keep drinking water regularly while it stays hot, and refill stored drinking water for the next hot spell.",
+        "done": false
+      },
+      {
+        "id": "hh-after-rest-1",
+        "audience": "household",
+        "phase": "after",
+        "text": "Rest and recover in a cool place; if cramps or tiredness from the heat appear, move somewhere cooler, remove extra clothing and sip water.",
+        "done": false
+      },
+      {
+        "id": "hh-after-escalation-1",
+        "audience": "household",
+        "phase": "after",
+        "text": "If heat cramps or exhaustion get worse or last more than an hour, contact a health provider or the nearest health facility.",
+        "done": false
+      },
+      {
+        "id": "hh-after-check_others-1",
+        "audience": "household",
+        "phase": "after",
+        "text": "Keep checking on vulnerable neighbours and relatives until the heat has passed.",
+        "done": false
+      },
+      {
+        "id": "ow-before-work_schedule-1",
+        "audience": "outdoor_worker",
+        "phase": "before",
+        "text": "Plan heavy outdoor work around the forecast, moving it away from the midday heat where possible.",
+        "done": false
+      },
+      {
+        "id": "ow-before-shade-1",
+        "audience": "outdoor_worker",
+        "phase": "before",
+        "text": "Arrange shaded rest areas close to the work site before hot days.",
+        "done": false
+      },
+      {
+        "id": "ow-before-hydration-1",
+        "audience": "outdoor_worker",
+        "phase": "before",
+        "text": "Make sure enough drinking water is available at the work site.",
+        "done": false
+      },
+      {
+        "id": "ow-before-escalation-1",
+        "audience": "outdoor_worker",
+        "phase": "before",
+        "text": "Learn the early signs of heat stress and agree in advance how the team will contact local emergency services or the nearest health facility from the work site.",
+        "done": false
+      },
+      {
+        "id": "ow-during-hydration-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "text": "Drink water regularly throughout the work shift.",
+        "done": false
+      },
+      {
+        "id": "ow-during-rest-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "text": "Take regular rest breaks in the shade or another cool place.",
+        "done": false
+      },
+      {
+        "id": "ow-during-shade-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "text": "Work in the shade where possible and wear a wide hat and loose, light-coloured clothing.",
+        "done": false
+      },
+      {
+        "id": "ow-during-work_schedule-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "text": "Avoid high-energy tasks during midday heat if possible.",
+        "done": false
+      },
+      {
+        "id": "ow-during-check_others-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "text": "Watch co-workers for signs of heat stress, especially older workers, pregnant workers and people with chronic health conditions.",
+        "done": false
+      },
+      {
+        "id": "ow-during-escalation-1",
+        "audience": "outdoor_worker",
+        "phase": "during",
+        "text": "Heat exhaustion and heat stroke need an emergency response: if a worker is confused, faints or collapses, stop work, move them to shade, cool them and contact local emergency services or the nearest health facility.",
+        "done": false
+      },
+      {
+        "id": "ow-after-rest-1",
+        "audience": "outdoor_worker",
+        "phase": "after",
+        "text": "After the shift, rest in a cool place, remove extra clothing and sip water to recover.",
+        "done": false
+      },
+      {
+        "id": "ow-after-escalation-1",
+        "audience": "outdoor_worker",
+        "phase": "after",
+        "text": "If cramps or exhaustion after work get worse or last more than an hour, contact a health provider or the nearest health facility.",
+        "done": false
+      },
+      {
+        "id": "ow-after-stay_informed-1",
+        "audience": "outdoor_worker",
+        "phase": "after",
+        "text": "Check the forecast for the coming days and adjust work schedules to it.",
+        "done": false
+      },
+      {
+        "id": "fm-before-livestock_crops-1",
+        "audience": "farmer",
+        "phase": "before",
+        "text": "Before hot spells, mulch to keep soil moist and plan shade for vegetable crops.",
+        "done": false
+      },
+      {
+        "id": "fm-before-hydration-1",
+        "audience": "farmer",
+        "phase": "before",
+        "text": "Store extra water for people, animals and crops before the heat arrives.",
+        "done": false
+      },
+      {
+        "id": "fm-before-shade-1",
+        "audience": "farmer",
+        "phase": "before",
+        "text": "Prepare shade for animals kept outside and make sure barns and sheds are well ventilated.",
+        "done": false
+      },
+      {
+        "id": "fm-before-stay_informed-1",
+        "audience": "farmer",
+        "phase": "before",
+        "text": "Follow local weather forecasts and crop advisories so you can plan ahead.",
+        "done": false
+      },
+      {
+        "id": "fm-before-escalation-1",
+        "audience": "farmer",
+        "phase": "before",
+        "text": "Know how to contact local emergency services or the nearest health facility, and keep the contact of a local veterinarian or extension worker for sick animals.",
+        "done": false
+      },
+      {
+        "id": "fm-during-hydration-1",
+        "audience": "farmer",
+        "phase": "during",
+        "text": "Give animals a continuous supply of cool, clean water, and drink water regularly yourself.",
+        "done": false
+      },
+      {
+        "id": "fm-during-work_schedule-1",
+        "audience": "farmer",
+        "phase": "during",
+        "text": "Do field work and handle animals in the early morning or evening, and feed cattle in cooler hours.",
+        "done": false
+      },
+      {
+        "id": "fm-during-rest-1",
+        "audience": "farmer",
+        "phase": "during",
+        "text": "Take rest and water breaks in the shade during field work.",
+        "done": false
+      },
+      {
+        "id": "fm-during-shade-1",
+        "audience": "farmer",
+        "phase": "during",
+        "text": "Keep animals that are outside in the shade, and give priority to shade for poultry, which cannot sweat.",
+        "done": false
+      },
+      {
+        "id": "fm-during-livestock_crops-1",
+        "audience": "farmer",
+        "phase": "during",
+        "text": "Irrigate in the cooler hours of the day and keep harvested produce out of the sun.",
+        "done": false
+      },
+      {
+        "id": "fm-during-escalation-1",
+        "audience": "farmer",
+        "phase": "during",
+        "text": "If a person is confused, faints or has hot, dry skin, contact local emergency services or the nearest health facility; if animals look lethargic or have dry or sunken eyes, contact a local veterinarian.",
+        "done": false
+      },
+      {
+        "id": "fm-after-livestock_crops-1",
+        "audience": "farmer",
+        "phase": "after",
+        "text": "After the heat, watch livestock for breathing and digestive problems.",
+        "done": false
+      },
+      {
+        "id": "fm-after-hydration-1",
+        "audience": "farmer",
+        "phase": "after",
+        "text": "Keep animal water clean and fresh, since warm stagnant water can grow toxic blue-green algae.",
+        "done": false
+      },
+      {
+        "id": "fm-after-rest-1",
+        "audience": "farmer",
+        "phase": "after",
+        "text": "Rest in a cool place after field work and sip water to recover.",
+        "done": false
+      },
+      {
+        "id": "fm-after-escalation-1",
+        "audience": "farmer",
+        "phase": "after",
+        "text": "Contact a local veterinarian or extension worker about animals that are still unwell after the heat.",
+        "done": false
+      }
+    ],
+    "revision": 1,
+    "issues": []
+  },
+  "checklist_markdown": "# Heatwave preparedness checklist\n\n**Not verified - needs human review.** Only items that passed automated safety checks are listed.\n\n_The plan did not pass automated safety verification after one revision. A person should review it before it is shared._\n\n## Households\n\n### Before the heat\n- [ ] Keep the home cooler by covering windows with curtains or shades, and find nearby cool public places you can go to during the hottest days.\n- [ ] Keep drinking water within easy reach of everyone at home so people can drink regularly on hot days.\n- [ ] Note the older people, young children, pregnant women and people with chronic illness nearby whom you will check on during hot days.\n- [ ] Learn the signs of heat illness, such as heavy sweating, dizziness, confusion, fainting or hot dry skin, and know how to contact local emergency services or the nearest health facility.\n- [ ] Follow weather forecasts and any official heat warnings issued by local authorities.\n\n### During the heat\n- [ ] Drink water regularly through the day.\n- [ ] Avoid heavy activity during the hottest part of the day and rest in the coolest place available.\n- [ ] If you need to go outside, stay in the shade and wear a wide hat and loose, light-coloured clothing.\n- [ ] Take cool showers or baths and cook less with the oven; do not rely on a fan as your main way to cool down.\n- [ ] Check regularly on older family members, neighbours and young children, and never leave children or pets in a parked vehicle.\n- [ ] If someone is confused, faints or has very hot, dry skin, contact local emergency services or the nearest health facility immediately, move them to a cool shaded place and cool them with wet cloths.\n\n### After the heat\n- [ ] Keep drinking water regularly while it stays hot, and refill stored drinking water for the next hot spell.\n- [ ] Rest and recover in a cool place; if cramps or tiredness from the heat appear, move somewhere cooler, remove extra clothing and sip water.\n- [ ] If heat cramps or exhaustion get worse or last more than an hour, contact a health provider or the nearest health facility.\n- [ ] Keep checking on vulnerable neighbours and relatives until the heat has passed.\n\n## Outdoor workers\n\n### Before the heat\n- [ ] Plan heavy outdoor work around the forecast, moving it away from the midday heat where possible.\n- [ ] Arrange shaded rest areas close to the work site before hot days.\n- [ ] Make sure enough drinking water is available at the work site.\n- [ ] Learn the early signs of heat stress and agree in advance how the team will contact local emergency services or the nearest health facility from the work site.\n\n### During the heat\n- [ ] Drink water regularly throughout the work shift.\n- [ ] Take regular rest breaks in the shade or another cool place.\n- [ ] Work in the shade where possible and wear a wide hat and loose, light-coloured clothing.\n- [ ] Avoid high-energy tasks during midday heat if possible.\n- [ ] Watch co-workers for signs of heat stress, especially older workers, pregnant workers and people with chronic health conditions.\n- [ ] Heat exhaustion and heat stroke need an emergency response: if a worker is confused, faints or collapses, stop work, move them to shade, cool them and contact local emergency services or the nearest health facility.\n\n### After the heat\n- [ ] After the shift, rest in a cool place, remove extra clothing and sip water to recover.\n- [ ] If cramps or exhaustion after work get worse or last more than an hour, contact a health provider or the nearest health facility.\n- [ ] Check the forecast for the coming days and adjust work schedules to it.\n\n## Farmers\n\n### Before the heat\n- [ ] Before hot spells, mulch to keep soil moist and plan shade for vegetable crops.\n- [ ] Store extra water for people, animals and crops before the heat arrives.\n- [ ] Prepare shade for animals kept outside and make sure barns and sheds are well ventilated.\n- [ ] Follow local weather forecasts and crop advisories so you can plan ahead.\n- [ ] Know how to contact local emergency services or the nearest health facility, and keep the contact of a local veterinarian or extension worker for sick animals.\n\n### During the heat\n- [ ] Give animals a continuous supply of cool, clean water, and drink water regularly yourself.\n- [ ] Do field work and handle animals in the early morning or evening, and feed cattle in cooler hours.\n- [ ] Take rest and water breaks in the shade during field work.\n- [ ] Keep animals that are outside in the shade, and give priority to shade for poultry, which cannot sweat.\n- [ ] Irrigate in the cooler hours of the day and keep harvested produce out of the sun.\n- [ ] If a person is confused, faints or has hot, dry skin, contact local emergency services or the nearest health facility; if animals look lethargic or have dry or sunken eyes, contact a local veterinarian.\n\n### After the heat\n- [ ] After the heat, watch livestock for breathing and digestive problems.\n- [ ] Keep animal water clean and fresh, since warm stagnant water can grow toxic blue-green algae.\n- [ ] Rest in a cool place after field work and sip water to recover.\n- [ ] Contact a local veterinarian or extension worker about animals that are still unwell after the heat.\n",
+  "missing_information": [
+    "Official warnings are not available from this provider.",
+    "Departure-from-normal criteria not evaluated: climatological normals unavailable.",
+    "IMD declares a heat wave only when criteria are met at two or more stations for two consecutive days; this is a single forecast point.",
+    "The coordinator model skipped step(s) community_risk, action_planner, safety_verifier, action_planner, safety_verifier; they were run deterministically."
+  ],
+  "verification_status": "failed",
+  "verification": {
+    "status": "failed",
+    "checks": [
+      {
+        "name": "weather_data",
+        "passed": true,
+        "severity": "error",
+        "message": "Weather status is ok.",
+        "item_id": null
+      },
+      {
+        "name": "weather_freshness",
+        "passed": true,
+        "severity": "error",
+        "message": "Weather data is fresh.",
+        "item_id": null
+      },
+      {
+        "name": "weather_live",
+        "passed": true,
+        "severity": "warning",
+        "message": "Weather data is live.",
+        "item_id": null
+      },
+      {
+        "name": "weather_sources",
+        "passed": true,
+        "severity": "error",
+        "message": "Weather sources are listed.",
+        "item_id": null
+      },
+      {
+        "name": "plan_present",
+        "passed": true,
+        "severity": "error",
+        "message": "The plan has 44 items.",
+        "item_id": null
+      },
+      {
+        "name": "risk_category_match",
+        "passed": true,
+        "severity": "error",
+        "message": "Plan risk category (extreme) matches the assessment.",
+        "item_id": null
+      },
+      {
+        "name": "escalation_present",
+        "passed": true,
+        "severity": "error",
+        "message": "Escalation guidance is present for household.",
+        "item_id": null
+      },
+      {
+        "name": "escalation_present",
+        "passed": true,
+        "severity": "error",
+        "message": "Escalation guidance is present for outdoor_worker.",
+        "item_id": null
+      },
+      {
+        "name": "escalation_present",
+        "passed": true,
+        "severity": "error",
+        "message": "Escalation guidance is present for farmer.",
+        "item_id": null
+      },
+      {
+        "name": "banned_content",
+        "passed": false,
+        "severity": "error",
+        "message": "The plan item general-1 names a medicine.",
+        "item_id": "general-1"
+      }
+    ],
+    "issues": [
+      "The plan item general-1 names a medicine."
+    ],
+    "warnings": [],
+    "llm_concerns": [],
+    "verified_item_ids": [
+      "hh-before-cooling-1",
+      "hh-before-hydration-1",
+      "hh-before-check_others-1",
+      "hh-before-escalation-1",
+      "hh-before-stay_informed-1",
+      "hh-during-hydration-1",
+      "hh-during-rest-1",
+      "hh-during-shade-1",
+      "hh-during-cooling-1",
+      "hh-during-check_others-1",
+      "hh-during-escalation-1",
+      "hh-after-hydration-1",
+      "hh-after-rest-1",
+      "hh-after-escalation-1",
+      "hh-after-check_others-1",
+      "ow-before-work_schedule-1",
+      "ow-before-shade-1",
+      "ow-before-hydration-1",
+      "ow-before-escalation-1",
+      "ow-during-hydration-1",
+      "ow-during-rest-1",
+      "ow-during-shade-1",
+      "ow-during-work_schedule-1",
+      "ow-during-check_others-1",
+      "ow-during-escalation-1",
+      "ow-after-rest-1",
+      "ow-after-escalation-1",
+      "ow-after-stay_informed-1",
+      "fm-before-livestock_crops-1",
+      "fm-before-hydration-1",
+      "fm-before-shade-1",
+      "fm-before-stay_informed-1",
+      "fm-before-escalation-1",
+      "fm-during-hydration-1",
+      "fm-during-work_schedule-1",
+      "fm-during-rest-1",
+      "fm-during-shade-1",
+      "fm-during-livestock_crops-1",
+      "fm-during-escalation-1",
+      "fm-after-livestock_crops-1",
+      "fm-after-hydration-1",
+      "fm-after-rest-1",
+      "fm-after-escalation-1"
+    ],
+    "pct_items_verified": 97.7
+  },
+  "revision_count": 1,
+  "consistency_issues": [],
+  "steering_blocks": [],
+  "trace": [
+    {
+      "agent": "coordinator",
+      "tool": "weather_intelligence",
+      "status": "success",
+      "duration_ms": 11.6,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 1
+    },
+    {
+      "agent": "weather_intelligence",
+      "tool": "get_weather",
+      "status": "success",
+      "duration_ms": 1.1,
+      "cancel_reason": null,
+      "input_summary": {
+        "location": "Wardha"
+      },
+      "step_index": 1
+    },
+    {
+      "agent": "weather_intelligence",
+      "tool": "get_weather_alerts",
+      "status": "success",
+      "duration_ms": 0.7,
+      "cancel_reason": null,
+      "input_summary": {
+        "location": "Wardha"
+      },
+      "step_index": 1
+    },
+    {
+      "agent": "weather_intelligence",
+      "tool": "get_forecast",
+      "status": "success",
+      "duration_ms": 1.7,
+      "cancel_reason": null,
+      "input_summary": {
+        "location": "Wardha",
+        "days": 3
+      },
+      "step_index": 1
+    },
+    {
+      "agent": "coordinator_fallback",
+      "tool": "community_risk",
+      "status": "success",
+      "duration_ms": 8.6,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 2
+    },
+    {
+      "agent": "community_risk",
+      "tool": "classify_heat_risk",
+      "status": "success",
+      "duration_ms": 2.0,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 2
+    },
+    {
+      "agent": "coordinator_fallback",
+      "tool": "action_planner",
+      "status": "success",
+      "duration_ms": 12.6,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 3
+    },
+    {
+      "agent": "action_planner",
+      "tool": "add_general_advice",
+      "status": "success",
+      "duration_ms": 0.8,
+      "cancel_reason": null,
+      "input_summary": {
+        "audience": "household",
+        "phase": "during",
+        "text": "<str>"
+      },
+      "step_index": 3
+    },
+    {
+      "agent": "coordinator_fallback",
+      "tool": "safety_verifier",
+      "status": "success",
+      "duration_ms": 15.0,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 4
+    },
+    {
+      "agent": "safety_verifier",
+      "tool": "run_safety_checks",
+      "status": "success",
+      "duration_ms": 5.1,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 4
+    },
+    {
+      "agent": "coordinator_fallback",
+      "tool": "action_planner",
+      "status": "success",
+      "duration_ms": 89.5,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 5
+    },
+    {
+      "agent": "action_planner",
+      "tool": "add_general_advice",
+      "status": "success",
+      "duration_ms": 1.0,
+      "cancel_reason": null,
+      "input_summary": {
+        "audience": "household",
+        "phase": "during",
+        "text": "<str>"
+      },
+      "step_index": 5
+    },
+    {
+      "agent": "coordinator_fallback",
+      "tool": "safety_verifier",
+      "status": "success",
+      "duration_ms": 33.9,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 6
+    },
+    {
+      "agent": "safety_verifier",
+      "tool": "run_safety_checks",
+      "status": "success",
+      "duration_ms": 10.3,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 6
+    }
+  ],
+  "notices": [
+    "HeatWise AI does not send alerts or contact anyone. Share this plan yourself if it is useful.",
+    "Forecast values are not official warnings. Follow your local meteorological and disaster management authorities for official warnings.",
+    "This is general preparedness guidance, not medical advice.",
+    "The plan did not pass automated safety verification after one revision. A person should review it before it is shared."
+  ],
+  "current_conditions": {
+    "location": {
+      "query": "Wardha",
+      "name": "Wardha",
+      "admin1": "Maharashtra",
+      "admin2": null,
+      "country": "India",
+      "country_code": "IN",
+      "latitude": 20.74,
+      "longitude": 78.6,
+      "timezone": "Asia/Kolkata"
+    },
+    "temperature_c": 44.2,
+    "apparent_temperature_c": 46.0,
+    "relative_humidity_pct": 21.0,
+    "wind_speed_kmh": 11.0,
+    "precipitation_mm": 0.0,
+    "missing_fields": [],
+    "provenance": {
+      "provider": "FakeProvider",
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z",
+      "observed_at": "2026-05-10T08:50:00Z",
+      "data_mode": "live",
+      "is_stale": false
+    }
+  },
+  "forecast": {
+    "location": {
+      "query": "Wardha",
+      "name": "Wardha",
+      "admin1": "Maharashtra",
+      "admin2": null,
+      "country": "India",
+      "country_code": "IN",
+      "latitude": 20.74,
+      "longitude": 78.6,
+      "timezone": "Asia/Kolkata"
+    },
+    "days": [
+      {
+        "date": "2026-05-10",
+        "temperature_max_c": 44.0,
+        "temperature_min_c": 29.0,
+        "apparent_temperature_max_c": 46.0,
+        "precipitation_sum_mm": 0.0,
+        "uv_index_max": 10.0,
+        "relative_humidity_max_pct": 35.0,
+        "missing_fields": []
+      },
+      {
+        "date": "2026-05-11",
+        "temperature_max_c": 45.0,
+        "temperature_min_c": 29.0,
+        "apparent_temperature_max_c": 47.0,
+        "precipitation_sum_mm": 0.0,
+        "uv_index_max": 10.0,
+        "relative_humidity_max_pct": 35.0,
+        "missing_fields": []
+      },
+      {
+        "date": "2026-05-12",
+        "temperature_max_c": 46.0,
+        "temperature_min_c": 29.0,
+        "apparent_temperature_max_c": 48.0,
+        "precipitation_sum_mm": 0.0,
+        "uv_index_max": 10.0,
+        "relative_humidity_max_pct": 35.0,
+        "missing_fields": []
+      }
+    ],
+    "provenance": {
+      "provider": "FakeProvider",
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z",
+      "observed_at": "2026-05-10T08:50:00Z",
+      "data_mode": "live",
+      "is_stale": false
+    },
+    "kind": "forecast",
+    "note": "Model forecast values. These are not official warnings."
+  },
+  "alerts": {
+    "location": {
+      "query": "Wardha",
+      "name": "Wardha",
+      "admin1": "Maharashtra",
+      "admin2": null,
+      "country": "India",
+      "country_code": "IN",
+      "latitude": 20.74,
+      "longitude": 78.6,
+      "timezone": "Asia/Kolkata"
+    },
+    "alerts_supported": false,
+    "alerts": [],
+    "explanation": "Fake has no alerts.",
+    "official_sources": [],
+    "provenance": {
+      "provider": "FakeProvider",
+      "source_url": "https://fake.example/api",
+      "retrieved_at": "2026-05-10T09:00:00Z",
+      "observed_at": "2026-05-10T08:50:00Z",
+      "data_mode": "live",
+      "is_stale": false
+    }
+  }
+}

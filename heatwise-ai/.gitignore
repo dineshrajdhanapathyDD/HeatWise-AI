@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# Local agent state
+.agents/
+sessions/
+snapshot_sessions/
+data/local_store/
+.data/
+
+*.log
+# Node / frontend
+node_modules/
+dist/
+
+# CDK
+cdk.out/
+infrastructure/build/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

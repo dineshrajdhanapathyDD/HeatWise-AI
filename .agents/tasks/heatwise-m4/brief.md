@@ -1,0 +1,32 @@
+Implement Milestone M4 of HeatWise AI: persistence and AWS infrastructure as code. Size: heavy. It spans storage, session management, Lambda packaging, a job worker redesign, CDK stacks, an optional AgentCore entrypoint and docs, on top of a working, tested M1-M3 app.
+
+## Locations
+- Project root: d:\github work\SDK workshop\heatwise-ai (Windows, PowerShell; Python 3.13 venv at .venv; backend tests `.venv\Scripts\python.exe -m pytest` = 223 passed, 4 deselected; frontend in frontend/ with `npm run typecheck|lint|test|build` = 46 tests passing; Node v22.23.2). Not a git repo. Work in place, no worktree, no commits.
+- Spec, kept in sync: d:\github work\SDK workshop\.kiro\specs\heatwise-ai\requirements.md (Requirements 8 and 11), design.md (read the M3 section: API contract, job model, store interface), tasks.md (M4 = tasks 4.1-4.4; read the M2 and M3 findings).
+- Relevant code: backend/main.py, backend/api/ (FastAPI routes, job runner, error envelope), backend/session/ (the M3 local JSON-file store behind a repository interface; files in .data/assessments/), backend/agents/coordinator.py, backend/config.py, backend/agents/model_factory.py. Create infrastructure/ (app.py, stacks/, requirements.txt, cdk.json) as in the original repo layout in design.md section 4.
+- Workshop reference for AgentCore (read-only): d:\github work\SDK workshop\_reference\strands-workshop\samples\05-deploy\ (main.py uses `from bedrock_agentcore.runtime import BedrockAgentCoreApp` with `@app.entrypoint`; README documents the `agentcore create/add/dev/deploy/invoke` CLI from the `@aws/agentcore` npm package; requirements pin bedrock-agentcore>=1.13.0).
+
+## Scope
+1. Strands session management (Req 8.1): use the SDK's session managers. strands-agents 1.63.0 exports FileSessionManager, S3SessionManager, SnapshotSessionManager and RepositorySessionManager from strands.session. Wire coordinator conversation continuity with a unique session id: file storage locally, S3 when configured. Keep public weather data separate from community profile data. Store no personal data.
+2. Assessment store (Req 8.2, 8.3): add a DynamoDB implementation of the existing repository interface, selected by config, with the local JSON store as the default. Design keys for get-by-id and history-by-place. Test it offline with moto, pinned to an exact version.
+3. Job model on Lambda (important): M3 runs jobs in a background thread with in-memory job state, so jobs are lost on restart. That does not work on Lambda, where execution freezes after the response and state isn't shared across instances. The measured live coordinator run took about 41 s. Recommended design: job records in DynamoDB; the API Lambda creates the job and asynchronously invokes a worker Lambda (InvocationType Event); the worker runs the coordinator with a timeout well above the run time and writes the result and report. Local dev keeps the thread runner behind the same interface. Choose and document; keep the API contract the frontend uses unchanged.
+4. CDK stacks in Python (Req 11.1): API (FastAPI on Lambda via a documented adapter, e.g. Mangum or AWS Lambda Web Adapter, your choice, document why) behind API Gateway or a Lambda Function URL; worker Lambda; DynamoDB tables (on-demand); S3 bucket for sessions (block public access, encryption, enforce SSL); CloudWatch log groups with retention set; least-privilege IAM. Bedrock permission scoped to the configured inference profile and the foundation-model ARNs it routes to. Verify from AWS documentation which regions the `us.amazon.nova-2-lite-v1:0` profile routes to; don't guess. CORS origin from config. Optional, off by default: S3 + CloudFront static hosting for the frontend build.
+5. Optional AgentCore entrypoint (Req 11.2): backend/agentcore_entry.py wrapping the coordinator with BedrockAgentCoreApp, plus docs of prerequisites and the CLI steps as the workshop documents them. Do not deploy it.
+6. Docs: docs/deployment.md (prerequisites, synth, deploy, invoke, cost notes, cleanup/destroy steps), docs/architecture.md; README and spec updates.
+
+## Constraints from this user's account (must follow)
+- Do NOT deploy, and do not create, modify or delete any AWS resource. This milestone ends at `cdk synth`. Deployment will be a separate, user-approved step. Read-only AWS checks (describe/list/get, sts get-caller-identity) are fine if needed.
+- Don't touch existing AWS resources such as IAM users, policies, keys or other stacks. The user wants options presented, not changes.
+- If you use an API Gateway RestApi, set `cloudWatchRole: false` (Python: cloud_watch_role=False). The account-wide API Gateway CloudWatch logging role in us-east-1 belongs to another stack (RoadGuard-dev), and the CDK default would take it over. Access logs can still be configured.
+- us-east-1 is already CDK-bootstrapped, so don't run `cdk bootstrap`.
+- Machine has about 6 GB RAM and Docker Desktop is often not running; Docker builds can run out of memory. Prefer Lambda packaging without Docker (for example pip/uv install with `--platform manylinux2014_x86_64` or aarch64 `--only-binary=:all:` into an asset directory, matching the Lambda architecture you choose), and check the unzipped size against the Lambda limit. If Docker is truly required, say why and stop to ask.
+- Pin every new dependency to an exact version (Python and npm, including aws-cdk-lib, constructs and the CDK CLI; npx with a pinned version is fine).
+- No secrets or credentials in code or config. The Bedrock model ID, region, table names and so on come from env/config.
+- Don't break the existing 223 backend and 46 frontend tests. Automated tests never call real AWS or Bedrock.
+
+## Done check
+- Backend pytest passes offline, with new tests for: the DynamoDB store (moto), the DynamoDB job repository and worker handler (moto, scripted models, demo weather), session manager selection and continuity (file-based), and the Lambda handler adapters.
+- Frontend checks still pass.
+- `cdk synth` succeeds for all stacks. Report the resources per stack, the IAM policy statements (confirm Bedrock is scoped and no wildcard actions on data stores), that the API Gateway account resource is absent, and the Lambda package sizes.
+- docs/deployment.md has exact deploy, smoke-test and destroy commands, plus an estimate of what runs at idle (aim for near-zero idle cost; no NAT gateways, no provisioned capacity).
+- tasks.md 4.1-4.4 checked with findings, design.md M4 section, README updated. End with a short list of what the user must decide before deploying.

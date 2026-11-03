@@ -1,0 +1,26 @@
+{
+  "verdict": "APPROVED",
+  "summary": "M5 meets the plan and the review checks. Every evaluation number in docs/evaluation.md, the README, the Builder Center article and tasks.md traces to backend/evaluation/results/evaluation-results.json, and evaluation.md is generated and stable on re-run. The live run is real and honest: a 2026-11-03 06:03:22 UTC timestamp, raw reports present in .data/evaluation, and 'price not verified; tokens only' with no dollar figure. No doc makes a health-outcome or user-count claim. External facts are cited from the fetched hackathon page or marked TODO. The checklist API accepts only renderable ids (a backend twin of renderablePlanItems; needs_human_review allows verified ids only, 404 otherwise, nothing stored). The verification rules, phone and diagnosis checks and safety.ts were not modified, and the adversarial cases are still rejected. strands-agents-evals==1.8.0 is pinned exactly in the dev/eval extras only, tests use fakes and scripted models with no Bedrock or network, the only AWS calls were read-only describe-stacks plus the opt-in live Bedrock run, and the CDK change (UpdateItem on the assessments table only) is code-only, not deployed. The spec files are in sync. Four minor, non-blocking findings concern labelling and documentation.",
+  "findings": [
+    {
+      "severity": "minor",
+      "file": "d:\\github work\\SDK workshop\\heatwise-ai\\docs\\builder-center-article.md",
+      "detail": "The live 'Unsafe injected items rejected' (9/9) and 'Safe control items accepted' (3/3) values sit under the 'Live (Nova 2 Lite)' column with no qualifier, and the Impact panel (frontend/src/routes/Impact.tsx via lib/evaluation.ts) shows them as 'Live Nova'. They are deterministic run_checks on a live-built plan, not model behaviour. Add that qualifier, for example in the article's 'What the numbers say' bullets and in the metric name or note on the panel."
+    },
+    {
+      "severity": "minor",
+      "file": "d:\\github work\\SDK workshop\\heatwise-ai\\docs\\deployment.md",
+      "detail": "After the M5 redeploy, POST /api/reports/{id}/checklist becomes a public, unauthenticated write. Report ids are listed by /api/history, so anyone can tick or untick items and change the Impact checklist counts. The 'Milestone 5 changes' section and the submission-checklist hygiene notes mention that the API is public, but not this new mutable state. Document it, or gate the endpoint before redeploying."
+    },
+    {
+      "severity": "minor",
+      "file": "d:\\github work\\SDK workshop\\heatwise-ai\\backend\\evaluation\\__main__.py",
+      "detail": "The live CLI preamble prints 'costs money (expected well under 1 USD)', an unverified price claim, while the results correctly record 'price not verified'. Remove the figure or replace it with 'price not verified'."
+    },
+    {
+      "severity": "minor",
+      "file": "d:\\github work\\SDK workshop\\heatwise-ai\\docs\\submission-checklist.md",
+      "detail": "'Entrants must be 18 or older with a Builder Center profile' and 'climate resilience is one of the listed focus areas' read as facts from the fetched hackathon page, but the recorded fetch evidence (FEAT-003 findings) lists only the five submission items, the workshop window, the due date and the rubric. Confirm both against the page or mark them TODO like the Rules."
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "dataset_version": "heatwise-knowledge-v1",
+  "synthetic": true,
+  "label": "Synthetic multiple-choice knowledge test. Answered by a language model in test scenarios, not by people.",
+  "questions": [
+    {
+      "id": "q01",
+      "question": "During extreme heat at home, what should NOT be your main way to cool down?",
+      "options": {"A": "Cool showers or baths", "B": "A fan", "C": "Resting in the coolest room", "D": "Wearing light clothing"},
+      "answer": "B",
+      "catalog_item_id": "hh-during-cooling-1",
+      "source_ids": ["ready_gov_extreme_heat"],
+      "answer_evidence": "do not rely on a fan as your main way to cool down"
+    },
+    {
+      "id": "q02",
+      "question": "Who should never be left in a parked vehicle during hot weather?",
+      "options": {"A": "Children or pets", "B": "Only babies", "C": "Only pets", "D": "Nobody, if the windows are open"},
+      "answer": "A",
+      "catalog_item_id": "hh-during-check_others-1",
+      "source_ids": ["ready_gov_extreme_heat", "nws_heat_safety", "who_heat_health_factsheet"],
+      "answer_evidence": "never leave children or pets in a parked vehicle"
+    },
+    {
+      "id": "q03",
+      "question": "Heat cramps or exhaustion should lead you to contact a health provider if they get worse or last more than how long?",
+      "options": {"A": "Ten minutes", "B": "An hour", "C": "A day", "D": "A week"},
+      "answer": "B",
+      "catalog_item_id": "hh-after-escalation-1",
+      "source_ids": ["ready_gov_extreme_heat"],
+      "answer_evidence": "last more than an hour"
+    },
+    {
+      "id": "q04",
+      "question": "What should be arranged for outdoor workers before hot days?",
+      "options": {"A": "Shaded rest areas close to the work site", "B": "Longer shifts", "C": "Fewer drinking water points", "D": "Work at midday only"},
+      "answer": "A",
+      "catalog_item_id": "ow-before-shade-1",
+      "source_ids": ["fao_extreme_heat_agrifood"],
+      "answer_evidence": "Arrange shaded rest areas close to the work site before hot days"
+    },
+    {
+      "id": "q05",
+      "question": "During hot work shifts, whom should workers watch for signs of heat stress?",
+      "options": {"A": "Only supervisors", "B": "Co-workers, especially older workers, pregnant workers and people with chronic health conditions", "C": "Only new workers", "D": "No one; each person watches only themselves"},
+      "answer": "B",
+      "catalog_item_id": "ow-during-check_others-1",
+      "source_ids": ["who_workplace_heat_stress"],
+      "answer_evidence": "Watch co-workers for signs of heat stress"
+    },
+    {
+      "id": "q06",
+      "question": "Which farm animals should get priority for shade because they cannot sweat?",
+      "options": {"A": "Cattle", "B": "Goats", "C": "Poultry", "D": "Horses"},
+      "answer": "C",
+      "catalog_item_id": "fm-during-shade-1",
+      "source_ids": ["fao_extreme_heat_agrifood", "wsu_livestock_heat_wave"],
+      "answer_evidence": "give priority to shade for poultry, which cannot sweat"
+    },
+    {
+      "id": "q07",
+      "question": "Why should animal water be kept clean and fresh after the heat?",
+      "options": {"A": "Warm stagnant water can grow toxic blue-green algae", "B": "Clean water stays cold all day", "C": "Animals refuse all water otherwise", "D": "It reduces feed costs"},
+      "answer": "A",
+      "catalog_item_id": "fm-after-hydration-1",
+      "source_ids": ["wsu_livestock_heat_wave"],
+      "answer_evidence": "warm stagnant water can grow toxic blue-green algae"
+    },
+    {
+      "id": "q08",
+      "question": "When should cattle be fed during hot weather?",
+      "options": {"A": "At midday", "B": "In cooler hours", "C": "Only once a week", "D": "Whenever it is hottest"},
+      "answer": "B",
+      "catalog_item_id": "fm-during-work_schedule-1",
+      "source_ids": ["wsu_livestock_heat_wave", "fao_extreme_heat_agrifood"],
+      "answer_evidence": "feed cattle in cooler hours"
+    },
+    {
+      "id": "q09",
+      "question": "Before hot spells, what helps keep crop soil moist?",
+      "options": {"A": "Burning crop residue", "B": "Mulching", "C": "Removing all shade", "D": "Ploughing at noon"},
+      "answer": "B",
+      "catalog_item_id": "fm-before-livestock_crops-1",
+      "source_ids": ["fao_extreme_heat_agrifood"],
+      "answer_evidence": "mulch to keep soil moist"
+    },
+    {
+      "id": "q10",
+      "question": "If someone is confused, faints or has very hot, dry skin, what should you do immediately?",
+      "options": {"A": "Wait until the evening", "B": "Contact local emergency services or the nearest health facility, move them to shade and cool them", "C": "Give them a hot drink", "D": "Let them keep working"},
+      "answer": "B",
+      "catalog_item_id": "hh-during-escalation-1",
+      "source_ids": ["ready_gov_extreme_heat"],
+      "answer_evidence": "contact local emergency services or the nearest health facility immediately"
+    }
+  ]
+}

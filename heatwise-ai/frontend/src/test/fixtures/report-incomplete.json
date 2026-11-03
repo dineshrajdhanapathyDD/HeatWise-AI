@@ -1,0 +1,93 @@
+{
+  "report_id": "94e0f9c1a9a142baa2fffafd8ef8ecc8",
+  "created_at": "2026-11-02T16:55:18.156538Z",
+  "status": "incomplete",
+  "query": "Wardha",
+  "location": null,
+  "data_retrieved_at": null,
+  "weather_source": {
+    "provider": null,
+    "source_urls": [],
+    "data_mode": null
+  },
+  "weather_summary": null,
+  "risk_category": "unknown",
+  "risk": null,
+  "evidence": [],
+  "recommended_actions": null,
+  "checklist_markdown": null,
+  "missing_information": [
+    "Weather provider error (provider_timeout): slow",
+    "No current conditions retrieved.",
+    "No forecast retrieved.",
+    "Official warnings are not available from this provider.",
+    "Community risk was not assessed because no usable weather data was retrieved."
+  ],
+  "verification_status": "not_run",
+  "verification": null,
+  "revision_count": 0,
+  "consistency_issues": [],
+  "steering_blocks": [],
+  "trace": [
+    {
+      "agent": "coordinator",
+      "tool": "weather_intelligence",
+      "status": "success",
+      "duration_ms": 12.3,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 1
+    },
+    {
+      "agent": "weather_intelligence",
+      "tool": "get_weather",
+      "status": "error",
+      "duration_ms": 1.0,
+      "cancel_reason": null,
+      "input_summary": {
+        "location": "Wardha"
+      },
+      "step_index": 1
+    },
+    {
+      "agent": "weather_intelligence",
+      "tool": "get_weather_alerts",
+      "status": "success",
+      "duration_ms": 0.8,
+      "cancel_reason": null,
+      "input_summary": {
+        "location": "Wardha"
+      },
+      "step_index": 1
+    },
+    {
+      "agent": "weather_intelligence",
+      "tool": "get_forecast",
+      "status": "error",
+      "duration_ms": 1.4,
+      "cancel_reason": null,
+      "input_summary": {
+        "location": "Wardha",
+        "days": 3
+      },
+      "step_index": 1
+    },
+    {
+      "agent": "coordinator",
+      "tool": "finalize_report",
+      "status": "success",
+      "duration_ms": 0.6,
+      "cancel_reason": null,
+      "input_summary": {},
+      "step_index": 2
+    }
+  ],
+  "notices": [
+    "HeatWise AI does not send alerts or contact anyone. Share this plan yourself if it is useful.",
+    "Forecast values are not official warnings. Follow your local meteorological and disaster management authorities for official warnings.",
+    "This is general preparedness guidance, not medical advice."
+  ],
+  "current_conditions": null,
+  "forecast": null,
+  "alerts": null
+}

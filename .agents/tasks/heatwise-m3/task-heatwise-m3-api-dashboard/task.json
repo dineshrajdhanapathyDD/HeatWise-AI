@@ -1,0 +1,7 @@
+{
+  "task_id": "task-heatwise-m3-api-dashboard",
+  "task_description": "HeatWise AI Milestone M3: a FastAPI job-based API over the existing coordinator (assessments, reports, history, health, metrics, local JSON store, offline scripted mode) and a React + TypeScript + Vite + Tailwind dashboard (screens A-G) designed with the taste-skill app-screen run, with tests, a demo run, an inspector loop at three widths, one live run, and spec/README updates. Full plan: d:\\github work\\SDK workshop\\.agents\\tasks\\heatwise-m3\\plan.md",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
+  "blocked_reason": null
+}

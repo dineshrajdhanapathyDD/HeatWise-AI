@@ -1,0 +1,7 @@
+{
+  "task_id": "task-heatwise-m4",
+  "task_description": "HeatWise AI Milestone M4: Strands session managers (file/S3), DynamoDB assessment store, Lambda-friendly job model (DynamoDB jobs + async worker Lambda), Mangum Lambda handlers, optional AgentCore entrypoint, Docker-free arm64 Lambda asset, Python CDK stacks ending at cdk synth (no AWS changes), docs and spec updates. Authoritative brief: d:/github work/SDK workshop/.agents/tasks/heatwise-m4/brief.md; full plan with design decisions D-M4-1..10 and digest: d:/github work/SDK workshop/.agents/tasks/heatwise-m4/plan.md.",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
+  "blocked_reason": null
+}

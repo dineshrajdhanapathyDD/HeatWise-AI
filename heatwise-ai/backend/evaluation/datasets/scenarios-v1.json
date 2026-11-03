@@ -1,0 +1,357 @@
+{
+  "dataset_version": "heatwise-eval-v1",
+  "synthetic": true,
+  "label": "Synthetic test scenarios. Not observations, not real communities.",
+  "notes": "Weather values are invented fixtures served by backend/evaluation/provider.py. Expected risk categories are derived by hand from design.md 8.2 (NWS heat index bands, IMD actual-maximum criteria, project vulnerability heuristic) and recomputed by backend/tests/test_evaluation_dataset.py. Values sit at least 1 F (heat index) and 0.5 C (forecast maximum) away from every band edge.",
+  "scenarios": [
+    {
+      "id": "S01",
+      "title": "Hot and dry plains town with older people, outdoor workers, farmers and limited water",
+      "location": "Eval Dryfield",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains", "elderly": true, "outdoor_workers": true, "farmers": true, "limited_water_access": true},
+      "weather": {
+        "location": {"name": "Eval Dryfield", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 21.1, "longitude": 79.1, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 43.0, "apparent_temperature_c": 45.0, "relative_humidity_pct": 15.0, "wind_speed_kmh": 14.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 45.0, "temperature_min_c": 29.0, "apparent_temperature_max_c": 47.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.5, "relative_humidity_max_pct": 25.0},
+          {"temperature_max_c": 46.0, "temperature_min_c": 30.0, "apparent_temperature_max_c": 48.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.8, "relative_humidity_max_pct": 24.0},
+          {"temperature_max_c": 44.5, "temperature_min_c": 29.5, "apparent_temperature_max_c": 46.5, "precipitation_sum_mm": 0.0, "uv_index_max": 10.2, "relative_humidity_max_pct": 27.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "extreme", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 107.2, "nws_band": "Danger", "nws_score": 3, "forecast_max_c": 46.0, "imd_indication": "heat_wave", "imd_score": 3, "hazard": 3, "indicator_count": 4, "heuristic_raise": true, "category": "extreme"},
+      "tags": ["hot_dry", "plains", "vulnerable_groups"]
+    },
+    {
+      "id": "S02",
+      "title": "Hot and dry plains town, no vulnerable groups listed",
+      "location": "Eval Stonebrook",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains"},
+      "weather": {
+        "location": {"name": "Eval Stonebrook", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 22.0, "longitude": 78.0, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 42.0, "apparent_temperature_c": 43.5, "relative_humidity_pct": 18.0, "wind_speed_kmh": 10.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 43.0, "temperature_min_c": 28.0, "apparent_temperature_max_c": 44.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.0, "relative_humidity_max_pct": 30.0},
+          {"temperature_max_c": 44.0, "temperature_min_c": 28.5, "apparent_temperature_max_c": 45.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.1, "relative_humidity_max_pct": 28.0},
+          {"temperature_max_c": 42.5, "temperature_min_c": 28.0, "apparent_temperature_max_c": 43.5, "precipitation_sum_mm": 0.0, "uv_index_max": 9.9, "relative_humidity_max_pct": 31.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "very_high", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 106.8, "nws_band": "Danger", "nws_score": 3, "forecast_max_c": 44.0, "imd_indication": "threshold_met", "imd_score": 1, "hazard": 3, "indicator_count": 0, "heuristic_raise": false, "category": "very_high"},
+      "tags": ["hot_dry", "plains"]
+    },
+    {
+      "id": "S03",
+      "title": "Severe forecast maximum at or above 47 C, farmers and young children",
+      "location": "Eval Kilnpur",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains", "farmers": true, "young_children": true},
+      "weather": {
+        "location": {"name": "Eval Kilnpur", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 26.3, "longitude": 73.0, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 44.0, "apparent_temperature_c": 45.5, "relative_humidity_pct": 12.0, "wind_speed_kmh": 16.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 46.0, "temperature_min_c": 31.0, "apparent_temperature_max_c": 47.5, "precipitation_sum_mm": 0.0, "uv_index_max": 11.0, "relative_humidity_max_pct": 20.0},
+          {"temperature_max_c": 48.0, "temperature_min_c": 32.0, "apparent_temperature_max_c": 49.0, "precipitation_sum_mm": 0.0, "uv_index_max": 11.2, "relative_humidity_max_pct": 18.0},
+          {"temperature_max_c": 47.5, "temperature_min_c": 31.5, "apparent_temperature_max_c": 48.5, "precipitation_sum_mm": 0.0, "uv_index_max": 11.1, "relative_humidity_max_pct": 19.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "extreme", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 107.2, "nws_band": "Danger", "nws_score": 3, "forecast_max_c": 48.0, "imd_indication": "severe_heat_wave", "imd_score": 4, "hazard": 4, "indicator_count": 2, "heuristic_raise": true, "category": "extreme", "note": "raise capped at extreme"},
+      "tags": ["hot_dry", "plains", "severe", "vulnerable_groups"]
+    },
+    {
+      "id": "S04",
+      "title": "Humid coastal town (IMD actual-maximum rule not applied) with four vulnerable groups",
+      "location": "Eval Saltmarsh",
+      "forecast_days": 3,
+      "profile": {"terrain": "coastal", "elderly": true, "chronic_illness_group": true, "outdoor_workers": true, "farmers": true},
+      "weather": {
+        "location": {"name": "Eval Saltmarsh", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 13.1, "longitude": 80.3, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 35.0, "apparent_temperature_c": 44.0, "relative_humidity_pct": 70.0, "wind_speed_kmh": 9.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 36.0, "temperature_min_c": 29.0, "apparent_temperature_max_c": 45.0, "precipitation_sum_mm": 0.0, "uv_index_max": 11.0, "relative_humidity_max_pct": 85.0},
+          {"temperature_max_c": 36.5, "temperature_min_c": 29.5, "apparent_temperature_max_c": 46.0, "precipitation_sum_mm": 0.0, "uv_index_max": 11.2, "relative_humidity_max_pct": 88.0},
+          {"temperature_max_c": 35.5, "temperature_min_c": 29.0, "apparent_temperature_max_c": 44.5, "precipitation_sum_mm": 2.0, "uv_index_max": 10.0, "relative_humidity_max_pct": 90.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "extreme", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 122.6, "nws_band": "Danger", "nws_score": 3, "forecast_max_c": 36.5, "imd_indication": null, "imd_score": 0, "hazard": 3, "indicator_count": 4, "heuristic_raise": true, "category": "extreme"},
+      "tags": ["humid", "coastal", "vulnerable_groups"]
+    },
+    {
+      "id": "S05",
+      "title": "Humid plains town, forecast maximum below 40 C, older people only",
+      "location": "Eval Rivermouth",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains", "elderly": true},
+      "weather": {
+        "location": {"name": "Eval Rivermouth", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 22.5, "longitude": 88.3, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 32.0, "apparent_temperature_c": 39.0, "relative_humidity_pct": 65.0, "wind_speed_kmh": 8.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 34.0, "temperature_min_c": 27.0, "apparent_temperature_max_c": 41.0, "precipitation_sum_mm": 1.0, "uv_index_max": 9.0, "relative_humidity_max_pct": 88.0},
+          {"temperature_max_c": 35.0, "temperature_min_c": 27.5, "apparent_temperature_max_c": 42.0, "precipitation_sum_mm": 0.0, "uv_index_max": 9.5, "relative_humidity_max_pct": 86.0},
+          {"temperature_max_c": 33.5, "temperature_min_c": 27.0, "apparent_temperature_max_c": 40.5, "precipitation_sum_mm": 3.0, "uv_index_max": 8.5, "relative_humidity_max_pct": 90.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "high", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 101.6, "nws_band": "Extreme Caution", "nws_score": 2, "forecast_max_c": 35.0, "imd_indication": "none", "imd_score": 0, "hazard": 2, "indicator_count": 1, "heuristic_raise": false, "category": "high"},
+      "tags": ["humid", "plains"]
+    },
+    {
+      "id": "S06",
+      "title": "Humid hilly town with one vulnerable group",
+      "location": "Eval Teaslope",
+      "forecast_days": 3,
+      "profile": {"terrain": "hilly", "young_children": true},
+      "weather": {
+        "location": {"name": "Eval Teaslope", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 26.9, "longitude": 94.2, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 30.0, "apparent_temperature_c": 35.0, "relative_humidity_pct": 70.0, "wind_speed_kmh": 6.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 31.0, "temperature_min_c": 22.0, "apparent_temperature_max_c": 36.0, "precipitation_sum_mm": 4.0, "uv_index_max": 8.0, "relative_humidity_max_pct": 92.0},
+          {"temperature_max_c": 31.5, "temperature_min_c": 22.5, "apparent_temperature_max_c": 36.5, "precipitation_sum_mm": 2.0, "uv_index_max": 8.2, "relative_humidity_max_pct": 90.0},
+          {"temperature_max_c": 30.5, "temperature_min_c": 22.0, "apparent_temperature_max_c": 35.5, "precipitation_sum_mm": 6.0, "uv_index_max": 7.5, "relative_humidity_max_pct": 94.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "high", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 95.1, "nws_band": "Extreme Caution", "nws_score": 2, "forecast_max_c": 31.5, "imd_indication": null, "imd_score": 0, "hazard": 2, "indicator_count": 1, "heuristic_raise": false, "category": "high"},
+      "tags": ["humid", "hilly"]
+    },
+    {
+      "id": "S07",
+      "title": "Mild hilly town with two vulnerable indicators (no hazard, so no raise)",
+      "location": "Eval Pinecrest",
+      "forecast_days": 3,
+      "profile": {"terrain": "hilly", "elderly": true, "limited_shade_or_cooling": true},
+      "weather": {
+        "location": {"name": "Eval Pinecrest", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 11.4, "longitude": 76.7, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 24.0, "apparent_temperature_c": 24.5, "relative_humidity_pct": 60.0, "wind_speed_kmh": 6.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 26.0, "temperature_min_c": 15.0, "apparent_temperature_max_c": 26.0, "precipitation_sum_mm": 1.0, "uv_index_max": 7.0, "relative_humidity_max_pct": 80.0},
+          {"temperature_max_c": 26.5, "temperature_min_c": 15.5, "apparent_temperature_max_c": 26.5, "precipitation_sum_mm": 0.5, "uv_index_max": 7.2, "relative_humidity_max_pct": 78.0},
+          {"temperature_max_c": 25.5, "temperature_min_c": 15.0, "apparent_temperature_max_c": 25.5, "precipitation_sum_mm": 2.0, "uv_index_max": 6.8, "relative_humidity_max_pct": 82.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "low", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 75.2, "nws_band": null, "nws_score": 0, "forecast_max_c": 26.5, "imd_indication": null, "imd_score": 0, "hazard": 0, "indicator_count": 2, "heuristic_raise": false, "category": "low", "note": "hazard 0, so the heuristic does not apply"},
+      "tags": ["mild", "hilly", "vulnerable_groups"]
+    },
+    {
+      "id": "S08",
+      "title": "Mild plains town, no vulnerable groups listed",
+      "location": "Eval Greenvale",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains"},
+      "weather": {
+        "location": {"name": "Eval Greenvale", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 12.9, "longitude": 77.6, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 22.0, "apparent_temperature_c": 22.0, "relative_humidity_pct": 55.0, "wind_speed_kmh": 7.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 27.0, "temperature_min_c": 18.0, "apparent_temperature_max_c": 27.0, "precipitation_sum_mm": 0.0, "uv_index_max": 7.5, "relative_humidity_max_pct": 75.0},
+          {"temperature_max_c": 28.0, "temperature_min_c": 18.5, "apparent_temperature_max_c": 28.0, "precipitation_sum_mm": 0.0, "uv_index_max": 7.8, "relative_humidity_max_pct": 72.0},
+          {"temperature_max_c": 27.5, "temperature_min_c": 18.0, "apparent_temperature_max_c": 27.5, "precipitation_sum_mm": 1.0, "uv_index_max": 7.2, "relative_humidity_max_pct": 78.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "low", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 71.3, "nws_band": null, "nws_score": 0, "forecast_max_c": 28.0, "imd_indication": "none", "imd_score": 0, "hazard": 0, "indicator_count": 0, "heuristic_raise": false, "category": "low"},
+      "tags": ["mild", "plains"]
+    },
+    {
+      "id": "S09",
+      "title": "Caution heat index band with two vulnerable indicators (raised one step)",
+      "location": "Eval Millbrook",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains", "outdoor_workers": true, "pregnant_women": true},
+      "weather": {
+        "location": {"name": "Eval Millbrook", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 18.5, "longitude": 73.9, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 29.0, "apparent_temperature_c": 31.0, "relative_humidity_pct": 50.0, "wind_speed_kmh": 9.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 33.0, "temperature_min_c": 22.0, "apparent_temperature_max_c": 34.0, "precipitation_sum_mm": 0.0, "uv_index_max": 9.0, "relative_humidity_max_pct": 70.0},
+          {"temperature_max_c": 34.0, "temperature_min_c": 22.5, "apparent_temperature_max_c": 35.0, "precipitation_sum_mm": 0.0, "uv_index_max": 9.2, "relative_humidity_max_pct": 68.0},
+          {"temperature_max_c": 33.5, "temperature_min_c": 22.0, "apparent_temperature_max_c": 34.5, "precipitation_sum_mm": 0.0, "uv_index_max": 9.1, "relative_humidity_max_pct": 71.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "high", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 85.4, "nws_band": "Caution", "nws_score": 1, "forecast_max_c": 34.0, "imd_indication": "none", "imd_score": 0, "hazard": 1, "indicator_count": 2, "heuristic_raise": true, "category": "high"},
+      "tags": ["mild", "plains", "vulnerable_groups", "heuristic_raise"]
+    },
+    {
+      "id": "S10",
+      "title": "IMD threshold met only (forecast maximum above 40 C), terrain not given",
+      "location": "Eval Dustgate",
+      "forecast_days": 3,
+      "profile": {},
+      "weather": {
+        "location": {"name": "Eval Dustgate", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 24.6, "longitude": 77.7, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 25.0, "apparent_temperature_c": 24.0, "relative_humidity_pct": 20.0, "wind_speed_kmh": 12.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 40.5, "temperature_min_c": 24.0, "apparent_temperature_max_c": 40.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.0, "relative_humidity_max_pct": 30.0},
+          {"temperature_max_c": 41.0, "temperature_min_c": 24.5, "apparent_temperature_max_c": 40.5, "precipitation_sum_mm": 0.0, "uv_index_max": 10.2, "relative_humidity_max_pct": 28.0},
+          {"temperature_max_c": 39.5, "temperature_min_c": 24.0, "apparent_temperature_max_c": 39.0, "precipitation_sum_mm": 0.0, "uv_index_max": 9.8, "relative_humidity_max_pct": 32.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "moderate", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 76.2, "nws_band": null, "nws_score": 0, "forecast_max_c": 41.0, "imd_indication": "threshold_met", "imd_score": 1, "hazard": 1, "indicator_count": 0, "heuristic_raise": false, "category": "moderate", "note": "terrain null is treated as plains"},
+      "tags": ["hot_dry", "imd_only", "terrain_unknown"]
+    },
+    {
+      "id": "S11",
+      "title": "Relative humidity missing from current conditions (IMD indication only)",
+      "location": "Eval Brickfield",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains", "elderly": true},
+      "weather": {
+        "location": {"name": "Eval Brickfield", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 25.4, "longitude": 81.8, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 41.0, "apparent_temperature_c": 42.0, "relative_humidity_pct": null, "wind_speed_kmh": 11.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 44.0, "temperature_min_c": 29.0, "apparent_temperature_max_c": 45.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.4, "relative_humidity_max_pct": 30.0},
+          {"temperature_max_c": 45.5, "temperature_min_c": 30.0, "apparent_temperature_max_c": 46.5, "precipitation_sum_mm": 0.0, "uv_index_max": 10.6, "relative_humidity_max_pct": 28.0},
+          {"temperature_max_c": 44.5, "temperature_min_c": 29.5, "apparent_temperature_max_c": 45.5, "precipitation_sum_mm": 0.0, "uv_index_max": 10.3, "relative_humidity_max_pct": 29.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "very_high", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": null, "nws_band": null, "nws_score": 0, "forecast_max_c": 45.5, "imd_indication": "heat_wave", "imd_score": 3, "hazard": 3, "indicator_count": 1, "heuristic_raise": false, "category": "very_high", "note": "heat index not computed without relative humidity"},
+      "tags": ["missing_data", "hot_dry", "plains"]
+    },
+    {
+      "id": "S12",
+      "title": "Current conditions tool error, forecast maximum at heat-wave level",
+      "location": "Eval Ashford",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains", "outdoor_workers": true, "farmers": true},
+      "weather": {
+        "location": {"name": "Eval Ashford", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 23.2, "longitude": 77.4, "timezone": "Asia/Kolkata"},
+        "current": null,
+        "current_error": "provider_unavailable",
+        "forecast_days": [
+          {"temperature_max_c": 44.0, "temperature_min_c": 29.0, "apparent_temperature_max_c": 45.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.5, "relative_humidity_max_pct": 26.0},
+          {"temperature_max_c": 46.0, "temperature_min_c": 30.0, "apparent_temperature_max_c": 47.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.7, "relative_humidity_max_pct": 24.0},
+          {"temperature_max_c": 45.5, "temperature_min_c": 30.0, "apparent_temperature_max_c": 46.5, "precipitation_sum_mm": 0.0, "uv_index_max": 10.6, "relative_humidity_max_pct": 25.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "extreme", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": null, "nws_band": null, "nws_score": 0, "forecast_max_c": 46.0, "imd_indication": "heat_wave", "imd_score": 3, "hazard": 3, "indicator_count": 2, "heuristic_raise": true, "category": "extreme"},
+      "tags": ["provider_error", "missing_data", "hot_dry", "plains"]
+    },
+    {
+      "id": "S13",
+      "title": "Stale current observation (180 minutes old, threshold 90)",
+      "location": "Eval Oldmill",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains", "elderly": true, "chronic_illness_group": true},
+      "weather": {
+        "location": {"name": "Eval Oldmill", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 26.8, "longitude": 80.9, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 40.0, "apparent_temperature_c": 42.0, "relative_humidity_pct": 25.0, "wind_speed_kmh": 10.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 42.0, "temperature_min_c": 28.0, "apparent_temperature_max_c": 43.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.0, "relative_humidity_max_pct": 35.0},
+          {"temperature_max_c": 43.0, "temperature_min_c": 28.5, "apparent_temperature_max_c": 44.0, "precipitation_sum_mm": 0.0, "uv_index_max": 10.2, "relative_humidity_max_pct": 33.0},
+          {"temperature_max_c": 41.5, "temperature_min_c": 28.0, "apparent_temperature_max_c": 42.5, "precipitation_sum_mm": 0.0, "uv_index_max": 9.9, "relative_humidity_max_pct": 36.0}
+        ],
+        "observed_minutes_ago": 180
+      },
+      "expected": {"status": "needs_human_review", "risk_category": "extreme", "verification_status": "failed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "action_planner", "safety_verifier", "finalize_report"]},
+      "derivation": {"heat_index_f": 106.0, "nws_band": "Danger", "nws_score": 3, "forecast_max_c": 43.0, "imd_indication": "threshold_met", "imd_score": 1, "hazard": 3, "indicator_count": 2, "heuristic_raise": true, "category": "extreme", "note": "weather_freshness fails on both verifications, so the plan needs human review"},
+      "tags": ["stale", "hot_dry", "plains"]
+    },
+    {
+      "id": "S14",
+      "title": "Weather provider unavailable for current conditions and forecast",
+      "location": "Eval Quietwell",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains", "elderly": true},
+      "weather": {
+        "location": {"name": "Eval Quietwell", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 21.5, "longitude": 83.9, "timezone": "Asia/Kolkata"},
+        "current": null,
+        "current_error": "provider_unavailable",
+        "forecast_days": null,
+        "forecast_error": "provider_unavailable",
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "incomplete", "risk_category": "unknown", "verification_status": "not_run", "path": ["weather_intelligence", "finalize_report"]},
+      "derivation": {"heat_index_f": null, "nws_band": null, "nws_score": null, "forecast_max_c": null, "imd_indication": null, "imd_score": null, "hazard": null, "indicator_count": 1, "heuristic_raise": false, "category": "unknown", "note": "no usable weather, so no risk is assessed"},
+      "tags": ["provider_error"]
+    },
+    {
+      "id": "S15",
+      "title": "Geocoding times out",
+      "location": "Eval Fogbank",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains"},
+      "weather": {
+        "location": {"name": "Eval Fogbank", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 20.0, "longitude": 85.0, "timezone": "Asia/Kolkata"},
+        "current": null,
+        "forecast_days": null,
+        "geocode_error": "provider_timeout",
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "incomplete", "risk_category": "unknown", "verification_status": "not_run", "path": ["weather_intelligence", "finalize_report"]},
+      "derivation": {"heat_index_f": null, "nws_band": null, "nws_score": null, "forecast_max_c": null, "imd_indication": null, "imd_score": null, "hazard": null, "indicator_count": 0, "heuristic_raise": false, "category": "unknown"},
+      "tags": ["provider_error"]
+    },
+    {
+      "id": "S16",
+      "title": "Invalid location text with a control character (rejected before any provider call)",
+      "location": "Eval\nLinebreak",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains"},
+      "weather": {
+        "location": {"name": "Eval Linebreak", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 19.0, "longitude": 72.8, "timezone": "Asia/Kolkata"},
+        "current": null,
+        "forecast_days": null,
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "incomplete", "risk_category": "unknown", "verification_status": "not_run", "path": ["weather_intelligence", "finalize_report"], "error_code": "invalid_location"},
+      "derivation": {"heat_index_f": null, "nws_band": null, "nws_score": null, "forecast_max_c": null, "imd_indication": null, "imd_score": null, "hazard": null, "indicator_count": 0, "heuristic_raise": false, "category": "unknown"},
+      "tags": ["invalid_location"]
+    },
+    {
+      "id": "S17",
+      "title": "Location not found by the provider",
+      "location": "Eval Nowhere",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains"},
+      "weather": {
+        "location": {"name": "Eval Nowhere", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 0.0, "longitude": 0.0, "timezone": "UTC"},
+        "current": null,
+        "forecast_days": null,
+        "geocode_error": "location_not_found",
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "incomplete", "risk_category": "unknown", "verification_status": "not_run", "path": ["weather_intelligence", "finalize_report"], "error_code": "location_not_found"},
+      "derivation": {"heat_index_f": null, "nws_band": null, "nws_score": null, "forecast_max_c": null, "imd_indication": null, "imd_score": null, "hazard": null, "indicator_count": 0, "heuristic_raise": false, "category": "unknown"},
+      "tags": ["invalid_location"]
+    },
+    {
+      "id": "S18",
+      "title": "Hindi requested (English plan with a language notice)",
+      "location": "Eval Lakeside",
+      "forecast_days": 3,
+      "profile": {"terrain": "plains", "elderly": true, "young_children": true, "preferred_language": "hi"},
+      "weather": {
+        "location": {"name": "Eval Lakeside", "admin1": "Synthetic State", "country": "Synthetic", "country_code": "XX", "latitude": 23.0, "longitude": 72.6, "timezone": "Asia/Kolkata"},
+        "current": {"temperature_c": 37.0, "apparent_temperature_c": 39.0, "relative_humidity_pct": 30.0, "wind_speed_kmh": 12.0, "precipitation_mm": 0.0},
+        "forecast_days": [
+          {"temperature_max_c": 38.0, "temperature_min_c": 26.0, "apparent_temperature_max_c": 39.0, "precipitation_sum_mm": 0.0, "uv_index_max": 9.5, "relative_humidity_max_pct": 45.0},
+          {"temperature_max_c": 39.0, "temperature_min_c": 26.5, "apparent_temperature_max_c": 40.0, "precipitation_sum_mm": 0.0, "uv_index_max": 9.8, "relative_humidity_max_pct": 42.0},
+          {"temperature_max_c": 38.5, "temperature_min_c": 26.0, "apparent_temperature_max_c": 39.5, "precipitation_sum_mm": 0.0, "uv_index_max": 9.6, "relative_humidity_max_pct": 44.0}
+        ],
+        "observed_minutes_ago": 10
+      },
+      "expected": {"status": "complete", "risk_category": "very_high", "verification_status": "passed", "path": ["weather_intelligence", "community_risk", "action_planner", "safety_verifier", "finalize_report"], "plan_language": "en", "requested_language": "hi"},
+      "derivation": {"heat_index_f": 100.0, "nws_band": "Extreme Caution", "nws_score": 2, "forecast_max_c": 39.0, "imd_indication": "none", "imd_score": 0, "hazard": 2, "indicator_count": 2, "heuristic_raise": true, "category": "very_high"},
+      "tags": ["language", "plains", "vulnerable_groups"]
+    }
+  ]
+}

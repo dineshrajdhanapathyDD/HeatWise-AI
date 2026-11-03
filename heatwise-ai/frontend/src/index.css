@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/* Achromatic ledger (taste-skill app sheet, seed 1720950938). The chrome is ink and grey; the one
+   data hue (heat, #b3411c) marks the forecast daily maximum and the product mark; status colours
+   appear only as pale pill pairs beside a text label. */
+@theme {
+  --font-sans: "Geist", system-ui, sans-serif;
+
+  --color-ground: #f8f8f8;
+  --color-surface: #ffffff;
+  --color-raised: #eeeeee;
+  --color-active: #e9e9e9;
+  --color-line: #e6e6e6;
+  --color-rule: #f0f0f0;
+  --color-control: #d4d4d4;
+  --color-ink: #0a0a0a;
+  --color-muted: #6b6b6b;
+  --color-primary: #141414;
+  --color-heat: #b3411c;
+  --color-chart-min: #8a8a8a;
+  --color-grid: #e5e5e5;
+  --color-positive: #2e7d32;
+  --color-negative: #c4242a;
+  --color-warning: #92400e;
+  --color-pos-bg: #dcfae5;
+  --color-pos-ink: #04250e;
+  --color-neg-bg: #ffedea;
+  --color-neg-ink: #831c1e;
+  --color-warn-bg: #fffbeb;
+  --color-warn-ink: #92400e;
+  --color-warn-line: #fde68a;
+  --color-neutral-bg: #eeeeee;
+  --color-neutral-ink: #3d3d3d;
+
+  --radius-card: 8px;
+  --radius-control: 6px;
+  --radius-chip: 4px;
+
+  --text-title: 24px;
+  --text-title--line-height: 32px;
+  --text-section: 16px;
+  --text-section--line-height: 24px;
+  --text-kpi: 30px;
+  --text-kpi--line-height: 36px;
+  --text-body: 14px;
+  --text-body--line-height: 20px;
+  --text-small: 12px;
+  --text-small--line-height: 16px;
+}
+
+@layer base {
+  html {
+    background: var(--color-ground);
+    color: var(--color-ink);
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "app": "python app.py",
+  "context": {
+    "@aws-cdk/core:defaultCrossStackReferences": "strong",
+    "heatwise:region": "us-east-1",
+    "heatwise:model_id": "us.amazon.nova-2-lite-v1:0",
+    "heatwise:cors_origins": ["http://localhost:5173", "http://127.0.0.1:5173"],
+    "heatwise:frontend": false,
+    "heatwise:removal": "retain",
+    "heatwise:log_retention_days": 14,
+    "heatwise:throttle_rate": 5,
+    "heatwise:throttle_burst": 10,
+    "heatwise:max_pending_jobs": 20,
+    "heatwise:lambda_asset_dir": "build/lambda",
+    "heatwise:frontend_dist": "../frontend/dist"
+  }
+}

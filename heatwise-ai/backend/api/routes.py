@@ -1,0 +1,118 @@
+"""HTTP routes under /api (Milestone 3)."""
+
+from __future__ import annotations
+
+import os
+from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+
+from fastapi import APIRouter, HTTPException, Query, Request, Response
+
+from backend.api.checklist import renderable_item_ids
+from backend.api.jobs import Job, JobManager
+from backend.api.schemas import (AssessmentRequest, ChecklistProgress, ChecklistUpdate, HealthView, HistoryPage,
+                                 JobView, MetricsView)
+from backend.api.summaries import compute_metrics, history_items
+from backend.config import Settings
+from backend.evaluation.results import DEFAULT_RESULTS_PATH, EvaluationResults, load_results
+from backend.services.weather.demo import DEMO_LOCATIONS
+from backend.session.store import AssessmentRecord, AssessmentStore
+
+router = APIRouter(prefix="/api")
+
+try:
+    APP_VERSION = version("heatwise-ai")
+except PackageNotFoundError:  # pragma: no cover - Lambda asset / source checkout without dist-info
+    APP_VERSION = os.environ.get("HEATWISE_VERSION") or "0.0.0"
+
+
+def _settings(request: Request) -> Settings:
+    return request.app.state.settings
+
+
+def _store(request: Request) -> AssessmentStore:
+    return request.app.state.store
+
+
+def _jobs(request: Request) -> JobManager:
+    return request.app.state.jobs
+
+
+def job_view(job: Job) -> JobView:
+    return JobView(job_id=job.job_id, status=job.status, created_at=job.created_at, started_at=job.started_at,
+                   finished_at=job.finished_at, duration_ms=job.duration_ms, report_id=job.report_id,
+                   error=job.error, request=job.request,
+                   report=job.report if job.status == "succeeded" else None)
+
+
+@router.get("/health", response_model=HealthView, response_model_exclude_none=True)
+def health(request: Request) -> HealthView:
+    s = _settings(request)
+    return HealthView(
+        version=APP_VERSION, weather_provider=s.weather_provider, agent_mode=s.agent_mode,
+        model_id=s.bedrock_model_id if s.agent_mode == "bedrock" else None,
+        demo_locations=list(DEMO_LOCATIONS) if s.weather_provider == "demo" else None,
+    )
+
+
+@router.post("/assessments", response_model=JobView, status_code=202)
+def create_assessment(body: AssessmentRequest, request: Request, response: Response) -> JobView:
+    job = _jobs(request).submit(body)
+    response.headers["Location"] = f"/api/assessments/{job.job_id}"
+    return job_view(job)
+
+
+@router.get("/assessments/{job_id}", response_model=JobView)
+def get_assessment(job_id: str, request: Request) -> JobView:
+    job = _jobs(request).get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="No assessment job with this id.")
+    return job_view(job)
+
+
+@router.get("/reports/{report_id}", response_model=AssessmentRecord)
+def get_report(report_id: str, request: Request) -> AssessmentRecord:
+    record = _store(request).get(report_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="No stored report with this id.")
+    return record
+
+
+@router.get("/history", response_model=HistoryPage)
+def history(request: Request, limit: int = Query(default=20, ge=1, le=100),
+            offset: int = Query(default=0, ge=0)) -> HistoryPage:
+    records = _store(request).all()  # changes need the older records, so summarise all, then page
+    items = history_items(records)
+    return HistoryPage(items=items[offset:offset + limit], total=len(items), limit=limit, offset=offset)
+
+
+@router.get("/metrics", response_model=MetricsView)
+def metrics(request: Request) -> MetricsView:
+    return compute_metrics(_store(request).all())
+
+
+@router.post("/reports/{report_id}/checklist", response_model=ChecklistProgress)
+def set_checklist_item(report_id: str, body: ChecklistUpdate, request: Request) -> ChecklistProgress:
+    """Community-level progress on one checklist item. Only items the dashboard renders are accepted."""
+    store = _store(request)
+    record = store.get(report_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="No stored report with this id.")
+    renderable = renderable_item_ids(record.report)
+    if body.item_id not in renderable:
+        raise HTTPException(status_code=404, detail="No checklist item with this id on this report.")
+    updated = store.set_checklist_item(report_id, body.item_id, body.completed)
+    if updated is None:
+        raise HTTPException(status_code=404, detail="No stored report with this id.")
+    done = [i for i in renderable if i in updated.checklist_completed]
+    return ChecklistProgress(report_id=report_id, completed_item_ids=done, completed_count=len(done),
+                             available_count=len(renderable))
+
+
+@router.get("/evaluation", response_model=EvaluationResults)
+def evaluation(request: Request) -> EvaluationResults:
+    """Synthetic evaluation results generated by `python -m backend.evaluation run`."""
+    path = Path(_settings(request).evaluation_results_path or DEFAULT_RESULTS_PATH)
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="No evaluation results file is available.")
+    return load_results(path)
